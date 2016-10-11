@@ -63,7 +63,6 @@ public class JukeAlertLogger {
     private final String mutedGroupsTbl;
     private PreparedStatement getSnitchIdFromLocationStmt;
     private PreparedStatement getLastSnitchID;
-    private PreparedStatement getSnitchLogStmt;
     private PreparedStatement getSnitchLogGroupStmt;
     private PreparedStatement getSnitchListStmt;
     private PreparedStatement softDeleteSnitchLogStmt;
@@ -416,13 +415,6 @@ public class JukeAlertLogger {
 
         getLastSnitchID = db.prepareStatement(String.format(
                 "SHOW TABLE STATUS LIKE '%s'", snitchsTbl));
-
-        // statement to get LIMIT entries OFFSET from a number from the snitchesDetailsTbl based on a snitch_id from the main snitchesTbl
-        // LIMIT ?,? means offset followed by max rows to return
-        getSnitchLogStmt = db.prepareStatement(String.format(
-                "SELECT * FROM %s"
-                + " WHERE snitch_id=? AND soft_delete = 0 ORDER BY snitch_log_time DESC LIMIT ?,?",
-                snitchDetailsTbl));
         
         //get all entries for a snitch
         getAllSnitchLogs = db.prepareStatement(String.format("select * from %s where snitch_id = ? AND soft_delete = 0 order by snitch_log_time desc;", snitchDetailsTbl));
@@ -671,21 +663,42 @@ public class JukeAlertLogger {
         return info;
     }
 
-    public List<SnitchAction> getSnitchInfo(int snitchId, int offset) {
+    public List<SnitchAction> getSnitchInfo(int snitchId, int offset, LoggedAction filterType, String filterPlayer) {
         List<SnitchAction> info = new ArrayList<SnitchAction>();
-
         try {
-            getSnitchLogStmt.setInt(1, snitchId);
-            getSnitchLogStmt.setInt(2, offset);
-            getSnitchLogStmt.setInt(3, logsPerPage);
-
-            ResultSet set = getSnitchLogStmt.executeQuery();
-            if (set.isBeforeFirst()) {
+            // statement to get LIMIT entries OFFSET from a number from the snitchesDetailsTbl based on a snitch_id from the main snitchesTbl
+            // optionally it can also be filtered by action type and initiated username
+            // LIMIT ?,? means offset followed by max rows to return
+            String stmt = String.format("SELECT * FROM %s WHERE snitch_id=? AND soft_delete = 0", this.snitchDetailsTbl);
+            if (filterType != null){
+                stmt += " AND snitch_logged_action=?";
+            }
+            if (!filterPlayer.isEmpty()){
+                stmt += " AND snitch_logged_initiated_user LIKE ?";
+            }
+            stmt += " ORDER BY snitch_log_time DESC LIMIT ?,?";
+            PreparedStatement getFilteredSnitchLogStmt = db.prepareStatement(stmt);
+            
+            getFilteredSnitchLogStmt.setInt(1, snitchId);
+            int pos = 2;
+            if (filterType != null){
+                getFilteredSnitchLogStmt.setByte(pos, (byte) filterType.getLoggedActionId());
+                pos++;
+            }
+            if (!filterPlayer.isEmpty()){
+                getFilteredSnitchLogStmt.setString(pos, "%" + filterPlayer + "%");
+                pos++;
+            }
+            getFilteredSnitchLogStmt.setInt(pos, offset);
+            getFilteredSnitchLogStmt.setInt(pos+1, this.logsPerPage);
+            
+            ResultSet set = getFilteredSnitchLogStmt.executeQuery();
+            if (set != null && set.isBeforeFirst()) {
                 while (set.next()) {
-                	SnitchAction entry = resultToSnitchAction(set, false);
-                	if (entry != null){
-                		info.add(entry);
-                	}
+                    SnitchAction entry = resultToSnitchAction(set, false);
+                    if (entry != null){
+                        info.add(entry);
+                    }
                 }
             }
         } catch (SQLException ex) {
@@ -1325,83 +1338,68 @@ public class JukeAlertLogger {
             coords = "[*** *** ***]";
         }
         
-        String actionString = "BUG";
+        String actionString = action.toActionString();
         ChatColor actionColor = ChatColor.WHITE;
         int actionTextType = 0;
         switch(action) {
             case ENTRY:
-                actionString = "Entry";
                 actionColor = ChatColor.BLUE;
                 actionTextType = 1;
                 break;
             case LOGIN:
-                actionString = "Login";
                 actionColor = ChatColor.GREEN;
                 actionTextType = 1;
                 break;
             case LOGOUT:
-                actionString = "Logout";
                 actionColor = ChatColor.GREEN;
                 actionTextType = 1;
                 break;
             case BLOCK_BREAK:
-                actionString = "Block Break";
                 actionColor = ChatColor.DARK_RED;
                 actionTextType = 2;
                 break;
             case BLOCK_PLACE:
-                actionString = "Block Place";
                 actionColor = ChatColor.DARK_RED;
                 actionTextType = 2;
                 break;
             case BLOCK_BURN:
-                actionString = "Block Burn";
                 actionColor = ChatColor.DARK_RED;
                 actionTextType = 2;
                 break;
             case IGNITED:
-                actionString = "Ignited";
                 actionColor = ChatColor.GOLD;
                 actionTextType = 2;
                 break;
             case USED:
             case BLOCK_USED:
-                actionString = "Used";
                 actionColor = ChatColor.GREEN;
                 actionTextType = 2;
                 break;
             case BUCKET_EMPTY:
-                actionString = "Bucket Empty";
                 actionColor = ChatColor.DARK_RED;
                 actionTextType = 2;
                 break;
             case BUCKET_FILL:
-                actionString = "Bucket Fill";
                 actionColor = ChatColor.GREEN;
                 actionTextType = 2;
                 break;
             case KILL:
-                actionString = "Killed";
                 actionColor = ChatColor.DARK_RED;
                 actionTextType = 3;
                 break;
             case EXCHANGE:
-                actionString = "Exchanged";
                 actionColor = ChatColor.DARK_GRAY;
                 actionTextType = 2;
                 break;
             case VEHICLE_DESTROY:
-                actionString = "Destroyed";
                 actionColor = ChatColor.DARK_RED;
                 actionTextType = 3;
                 break;
             case ENTITY_MOUNT:
-                actionString = "Mount";
                 actionColor = ChatColor.RED;
                 actionTextType = 3;
                 break;
             case ENTITY_DISMOUNT:
-                actionString = "Dismount";
                 actionColor = ChatColor.GOLD;
                 actionTextType = 3;
                 break;

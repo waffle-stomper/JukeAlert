@@ -1,5 +1,11 @@
 package com.untamedears.JukeAlert.model;
 
+import java.util.logging.Level;
+
+import org.bukkit.ChatColor;
+
+import com.untamedears.JukeAlert.JukeAlert;
+
 /**
  * Enum that represents a type of action that a snitch can record, and the value
  * that goes into the database for said action
@@ -57,6 +63,32 @@ public enum LoggedAction {
             case 14: return ENTITY_MOUNT;
             case 15: return ENTITY_DISMOUNT;
             default: return UNKNOWN;
+        }
+    }
+    
+    /**
+     * Returns the 'human-friendly' version of the action
+     * Currently this is only used when displaying snitch logs
+     * @return
+     */
+    public String toActionString(){
+        switch(this) {
+            case KILL: return "Killed";
+            case BLOCK_PLACE: return "Block Place";
+            case BLOCK_BREAK: return "Block Break";
+            case BUCKET_FILL: return "Bucket Fill";
+            case BUCKET_EMPTY: return "Buckety Empty";
+            case ENTRY: return "Entry";
+            case USED: case BLOCK_USED: return "Used";
+            case IGNITED: return "Ignited";
+            case BLOCK_BURN: return "Block Burn";
+            case LOGIN: return "Login";
+            case LOGOUT: return "Logout";
+            case EXCHANGE: return "Exchanged";
+            case VEHICLE_DESTROY: return "Destroyed";
+            case ENTITY_MOUNT: return "Mount";
+            case ENTITY_DISMOUNT: return "Dismount";
+            default: return "Unknown";
         }
     }
 }
