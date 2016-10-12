@@ -63,10 +63,6 @@ public class JukeAlertLogger {
     private final String mutedGroupsTbl;
     private PreparedStatement getSnitchIdFromLocationStmt;
     private PreparedStatement getLastSnitchID;
-    private PreparedStatement getSnitchLogStmt;
-    private PreparedStatement getSnitchLogFilterActionStmt;
-    private PreparedStatement getSnitchLogFilterPlayerStmt;
-    private PreparedStatement getSnitchLogFilterActionAndPlayerStmt;
     private PreparedStatement getSnitchLogGroupStmt;
     private PreparedStatement getSnitchListStmt;
     private PreparedStatement softDeleteSnitchLogStmt;
@@ -89,6 +85,10 @@ public class JukeAlertLogger {
     private PreparedStatement removeIgnoredGroupStmt;
     private PreparedStatement removeUUIDMutedStmt;
     private PreparedStatement getAllSnitchLogs;
+    private static String getSnitchLogStmt;
+    private static String getSnitchLogFilterActionStmt;
+    private static String getSnitchLogFilterPlayerStmt;
+    private static String getSnitchLogFilterActionAndPlayerStmt;
     private final int logsPerPage;
     private int lastSnitchID;
     private final int maxEntryCount;
@@ -422,31 +422,31 @@ public class JukeAlertLogger {
         
         // statement to get LIMIT entries OFFSET from a number from the snitchesDetailsTbl based on a snitch_id from the main snitchesTbl
         // LIMIT ?,? means offset followed by max rows to return
-        getSnitchLogStmt = db.prepareStatement(String.format(
+        getSnitchLogStmt = String.format(
                 "SELECT * FROM %s"
                 + " WHERE snitch_id=? AND soft_delete = 0 ORDER BY snitch_log_time DESC LIMIT ?,?",
-                snitchDetailsTbl));
+                snitchDetailsTbl);
         
         // This is the same as getSnitchLogStmt, but with an extra parameter for action type (byte)
-        getSnitchLogFilterActionStmt = db.prepareStatement(String.format(
+        getSnitchLogFilterActionStmt = String.format(
                 "SELECT * FROM %s"
                 + " WHERE snitch_id=? AND snitch_logged_action=? AND soft_delete = 0"
                 + " ORDER BY snitch_log_time DESC LIMIT ?,?",
-                snitchDetailsTbl));
+                snitchDetailsTbl);
         
         // This is the same as getSnitchLogStmt, but with an extra parameter for the initiating user (string)
-        getSnitchLogFilterPlayerStmt = db.prepareStatement(String.format(
+        getSnitchLogFilterPlayerStmt = String.format(
                 "SELECT * FROM %s"
                 + " WHERE snitch_id=? AND snitch_logged_initiated_user LIKE ? AND soft_delete = 0"
                 + " ORDER BY snitch_log_time DESC LIMIT ?,?",
-                snitchDetailsTbl));
+                snitchDetailsTbl);
         
         // This is the same as getSnitchLogStmt, but with extra parameters for both action type (byte) and initiating user (string)
-        getSnitchLogFilterActionAndPlayerStmt = db.prepareStatement(String.format(
+        getSnitchLogFilterActionAndPlayerStmt = String.format(
                 "SELECT * FROM %s"
                 + " WHERE snitch_id=? AND snitch_logged_action=? AND snitch_logged_initiated_user LIKE ? AND soft_delete = 0"
                 + " ORDER BY snitch_log_time DESC LIMIT ?,?",
-                snitchDetailsTbl));
+                snitchDetailsTbl);
         
         //get all entries for a snitch
         getAllSnitchLogs = db.prepareStatement(String.format("select * from %s where snitch_id = ? AND soft_delete = 0 order by snitch_log_time desc;", snitchDetailsTbl));
@@ -700,48 +700,44 @@ public class JukeAlertLogger {
         if (filterPlayer == null){
             filterPlayer = "";
         }
-        filterPlayer = filterPlayer.replaceAll("[^\\w]+", "");
+        filterPlayer = filterPlayer.replaceAll("\\W", "");
         if (filterPlayer.length() > 16){
             filterPlayer = filterPlayer.substring(0, 16);
         }
         
         List<SnitchAction> info = new ArrayList<SnitchAction>();
         try {
-            ResultSet set;
-            
-            if (filterAction == null && filterPlayer.isEmpty()){
-                getSnitchLogStmt.clearParameters();
-                getSnitchLogStmt.setInt(1, snitchId);
-                getSnitchLogStmt.setInt(2, offset);
-                getSnitchLogStmt.setInt(3, logsPerPage);
-                set = getSnitchLogStmt.executeQuery();
+            PreparedStatement ps;
+            if (filterAction != null && !filterPlayer.isEmpty()){
+                ps = db.prepareStatement(getSnitchLogFilterActionAndPlayerStmt);
+                ps.setInt(1,  snitchId);
+                ps.setByte(2, (byte) filterAction.getLoggedActionId());
+                ps.setString(3, "%" + filterPlayer + "%");
+                ps.setInt(4,  offset);
+                ps.setInt(5, logsPerPage);
             }
-            else if (filterAction != null){
-                getSnitchLogFilterActionStmt.clearParameters();
-                getSnitchLogFilterActionStmt.setInt(1, snitchId);
-                getSnitchLogFilterActionStmt.setByte(2, (byte) filterAction.getLoggedActionId());
-                getSnitchLogFilterActionStmt.setInt(3, offset);
-                getSnitchLogFilterActionStmt.setInt(4, logsPerPage);
-                set = getSnitchLogFilterActionStmt.executeQuery();
+            else if (filterAction != null && filterPlayer.isEmpty()){
+                ps = db.prepareStatement(getSnitchLogFilterActionStmt);
+                ps.setInt(1, snitchId);
+                ps.setByte(2, (byte) filterAction.getLoggedActionId());
+                ps.setInt(3, offset);
+                ps.setInt(4, logsPerPage);
             }
-            else if (!filterPlayer.isEmpty()){
-                getSnitchLogFilterPlayerStmt.clearParameters();
-                getSnitchLogFilterPlayerStmt.setInt(1,  snitchId);
-                getSnitchLogFilterPlayerStmt.setString(2, "%" + filterPlayer + "%");
-                getSnitchLogFilterPlayerStmt.setInt(3, offset);
-                getSnitchLogFilterPlayerStmt.setInt(4, logsPerPage);
-                set = getSnitchLogFilterPlayerStmt.executeQuery();
+            else if (filterAction == null && !filterPlayer.isEmpty()){
+                ps = db.prepareStatement(getSnitchLogFilterPlayerStmt);
+                ps.setInt(1,  snitchId);
+                ps.setString(2, "%" + filterPlayer + "%");
+                ps.setInt(3, offset);
+                ps.setInt(4, logsPerPage);
             }
             else{
-                getSnitchLogFilterActionAndPlayerStmt.clearParameters();
-                getSnitchLogFilterActionAndPlayerStmt.setInt(1,  snitchId);
-                getSnitchLogFilterActionAndPlayerStmt.setByte(2, (byte) filterAction.getLoggedActionId());
-                getSnitchLogFilterActionAndPlayerStmt.setString(3, "%" + filterPlayer + "%");
-                getSnitchLogFilterActionAndPlayerStmt.setInt(4,  offset);
-                getSnitchLogFilterActionAndPlayerStmt.setInt(5, logsPerPage);
-                set = getSnitchLogFilterActionAndPlayerStmt.executeQuery();
+                ps = db.prepareStatement(getSnitchLogStmt);
+                ps.setInt(1, snitchId);
+                ps.setInt(2, offset);
+                ps.setInt(3, logsPerPage);
             }
             
+            ResultSet set = ps.executeQuery();
             if (set != null && set.isBeforeFirst()) {
                 while (set.next()) {
                     SnitchAction entry = resultToSnitchAction(set, false);
