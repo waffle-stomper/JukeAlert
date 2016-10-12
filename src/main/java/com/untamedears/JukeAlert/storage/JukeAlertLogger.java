@@ -63,6 +63,10 @@ public class JukeAlertLogger {
     private final String mutedGroupsTbl;
     private PreparedStatement getSnitchIdFromLocationStmt;
     private PreparedStatement getLastSnitchID;
+    private PreparedStatement getSnitchLogStmt;
+    private PreparedStatement getSnitchLogFilterActionStmt;
+    private PreparedStatement getSnitchLogFilterPlayerStmt;
+    private PreparedStatement getSnitchLogFilterActionAndPlayerStmt;
     private PreparedStatement getSnitchLogGroupStmt;
     private PreparedStatement getSnitchListStmt;
     private PreparedStatement softDeleteSnitchLogStmt;
@@ -416,6 +420,34 @@ public class JukeAlertLogger {
         getLastSnitchID = db.prepareStatement(String.format(
                 "SHOW TABLE STATUS LIKE '%s'", snitchsTbl));
         
+        // statement to get LIMIT entries OFFSET from a number from the snitchesDetailsTbl based on a snitch_id from the main snitchesTbl
+        // LIMIT ?,? means offset followed by max rows to return
+        getSnitchLogStmt = db.prepareStatement(String.format(
+                "SELECT * FROM %s"
+                + " WHERE snitch_id=? AND soft_delete = 0 ORDER BY snitch_log_time DESC LIMIT ?,?",
+                snitchDetailsTbl));
+        
+        // This is the same as getSnitchLogStmt, but with an extra parameter for action type (byte)
+        getSnitchLogFilterActionStmt = db.prepareStatement(String.format(
+                "SELECT * FROM %s"
+                + " WHERE snitch_id=? AND snitch_logged_action=? AND soft_delete = 0"
+                + " ORDER BY snitch_log_time DESC LIMIT ?,?",
+                snitchDetailsTbl));
+        
+        // This is the same as getSnitchLogStmt, but with an extra parameter for the initiating user (string)
+        getSnitchLogFilterPlayerStmt = db.prepareStatement(String.format(
+                "SELECT * FROM %s"
+                + " WHERE snitch_id=? AND snitch_logged_initiated_user LIKE ? AND soft_delete = 0"
+                + " ORDER BY snitch_log_time DESC LIMIT ?,?",
+                snitchDetailsTbl));
+        
+        // This is the same as getSnitchLogStmt, but with extra parameters for both action type (byte) and initiating user (string)
+        getSnitchLogFilterActionAndPlayerStmt = db.prepareStatement(String.format(
+                "SELECT * FROM %s"
+                + " WHERE snitch_id=? AND snitch_logged_action=? AND snitch_logged_initiated_user LIKE ? AND soft_delete = 0"
+                + " ORDER BY snitch_log_time DESC LIMIT ?,?",
+                snitchDetailsTbl));
+        
         //get all entries for a snitch
         getAllSnitchLogs = db.prepareStatement(String.format("select * from %s where snitch_id = ? AND soft_delete = 0 order by snitch_log_time desc;", snitchDetailsTbl));
 
@@ -663,36 +695,53 @@ public class JukeAlertLogger {
         return info;
     }
 
-    public List<SnitchAction> getSnitchInfo(int snitchId, int offset, LoggedAction filterType, String filterPlayer) {
+    public List<SnitchAction> getSnitchInfo(int snitchId, int offset, LoggedAction filterAction, String filterPlayer) {
+        // Ensure that the supplied name is not null, doesn't contain special characters, and is at most 16 characters long
+        if (filterPlayer == null){
+            filterPlayer = "";
+        }
+        filterPlayer = filterPlayer.replaceAll("[^\\w]+", "");
+        if (filterPlayer.length() > 16){
+            filterPlayer = filterPlayer.substring(0, 16);
+        }
+        
         List<SnitchAction> info = new ArrayList<SnitchAction>();
         try {
-            // statement to get LIMIT entries OFFSET from a number from the snitchesDetailsTbl based on a snitch_id from the main snitchesTbl
-            // optionally it can also be filtered by action type and initiated username
-            // LIMIT ?,? means offset followed by max rows to return
-            String stmt = String.format("SELECT * FROM %s WHERE snitch_id=? AND soft_delete = 0", this.snitchDetailsTbl);
-            if (filterType != null){
-                stmt += " AND snitch_logged_action=?";
-            }
-            if (!filterPlayer.isEmpty()){
-                stmt += " AND snitch_logged_initiated_user LIKE ?";
-            }
-            stmt += " ORDER BY snitch_log_time DESC LIMIT ?,?";
-            PreparedStatement getFilteredSnitchLogStmt = db.prepareStatement(stmt);
+            ResultSet set;
             
-            getFilteredSnitchLogStmt.setInt(1, snitchId);
-            int pos = 2;
-            if (filterType != null){
-                getFilteredSnitchLogStmt.setByte(pos, (byte) filterType.getLoggedActionId());
-                pos++;
+            if (filterAction == null && filterPlayer.isEmpty()){
+                getSnitchLogStmt.clearParameters();
+                getSnitchLogStmt.setInt(1, snitchId);
+                getSnitchLogStmt.setInt(2, offset);
+                getSnitchLogStmt.setInt(3, logsPerPage);
+                set = getSnitchLogStmt.executeQuery();
             }
-            if (!filterPlayer.isEmpty()){
-                getFilteredSnitchLogStmt.setString(pos, "%" + filterPlayer + "%");
-                pos++;
+            else if (filterAction != null){
+                getSnitchLogFilterActionStmt.clearParameters();
+                getSnitchLogFilterActionStmt.setInt(1, snitchId);
+                getSnitchLogFilterActionStmt.setByte(2, (byte) filterAction.getLoggedActionId());
+                getSnitchLogFilterActionStmt.setInt(3, offset);
+                getSnitchLogFilterActionStmt.setInt(4, logsPerPage);
+                set = getSnitchLogFilterActionStmt.executeQuery();
             }
-            getFilteredSnitchLogStmt.setInt(pos, offset);
-            getFilteredSnitchLogStmt.setInt(pos+1, this.logsPerPage);
+            else if (!filterPlayer.isEmpty()){
+                getSnitchLogFilterPlayerStmt.clearParameters();
+                getSnitchLogFilterPlayerStmt.setInt(1,  snitchId);
+                getSnitchLogFilterPlayerStmt.setString(2, "%" + filterPlayer + "%");
+                getSnitchLogFilterPlayerStmt.setInt(3, offset);
+                getSnitchLogFilterPlayerStmt.setInt(4, logsPerPage);
+                set = getSnitchLogFilterPlayerStmt.executeQuery();
+            }
+            else{
+                getSnitchLogFilterActionAndPlayerStmt.clearParameters();
+                getSnitchLogFilterActionAndPlayerStmt.setInt(1,  snitchId);
+                getSnitchLogFilterActionAndPlayerStmt.setByte(2, (byte) filterAction.getLoggedActionId());
+                getSnitchLogFilterActionAndPlayerStmt.setString(3, "%" + filterPlayer + "%");
+                getSnitchLogFilterActionAndPlayerStmt.setInt(4,  offset);
+                getSnitchLogFilterActionAndPlayerStmt.setInt(5, logsPerPage);
+                set = getSnitchLogFilterActionAndPlayerStmt.executeQuery();
+            }
             
-            ResultSet set = getFilteredSnitchLogStmt.executeQuery();
             if (set != null && set.isBeforeFirst()) {
                 while (set.next()) {
                     SnitchAction entry = resultToSnitchAction(set, false);
@@ -1338,77 +1387,14 @@ public class JukeAlertLogger {
             coords = "[*** *** ***]";
         }
         
-        String actionString = action.toActionString();
-        ChatColor actionColor = ChatColor.WHITE;
-        int actionTextType = 0;
-        switch(action) {
-            case ENTRY:
-                actionColor = ChatColor.BLUE;
-                actionTextType = 1;
-                break;
-            case LOGIN:
-                actionColor = ChatColor.GREEN;
-                actionTextType = 1;
-                break;
-            case LOGOUT:
-                actionColor = ChatColor.GREEN;
-                actionTextType = 1;
-                break;
-            case BLOCK_BREAK:
-                actionColor = ChatColor.DARK_RED;
-                actionTextType = 2;
-                break;
-            case BLOCK_PLACE:
-                actionColor = ChatColor.DARK_RED;
-                actionTextType = 2;
-                break;
-            case BLOCK_BURN:
-                actionColor = ChatColor.DARK_RED;
-                actionTextType = 2;
-                break;
-            case IGNITED:
-                actionColor = ChatColor.GOLD;
-                actionTextType = 2;
-                break;
-            case USED:
-            case BLOCK_USED:
-                actionColor = ChatColor.GREEN;
-                actionTextType = 2;
-                break;
-            case BUCKET_EMPTY:
-                actionColor = ChatColor.DARK_RED;
-                actionTextType = 2;
-                break;
-            case BUCKET_FILL:
-                actionColor = ChatColor.GREEN;
-                actionTextType = 2;
-                break;
-            case KILL:
-                actionColor = ChatColor.DARK_RED;
-                actionTextType = 3;
-                break;
-            case EXCHANGE:
-                actionColor = ChatColor.DARK_GRAY;
-                actionTextType = 2;
-                break;
-            case VEHICLE_DESTROY:
-                actionColor = ChatColor.DARK_RED;
-                actionTextType = 3;
-                break;
-            case ENTITY_MOUNT:
-                actionColor = ChatColor.RED;
-                actionTextType = 3;
-                break;
-            case ENTITY_DISMOUNT:
-                actionColor = ChatColor.GOLD;
-                actionTextType = 3;
-                break;
-            default:
-            case UNKNOWN:
-                JukeAlert.getInstance().getLogger().log(Level.SEVERE, String.format(
-                    "Unknown LoggedAction: {0}", actionValue));
-                break;
+        if (action == LoggedAction.UNKNOWN){
+            JukeAlert.getInstance().getLogger().log(Level.SEVERE, String.format(
+                "Unknown LoggedAction: {0}", actionValue));
         }
+        
+        String actionString = action.getActionString();
+        ChatColor actionColor = action.getActionColor();
+        int actionTextType = action.getActionTextType();
         if (group) {
             actionTextType = 4;
         }

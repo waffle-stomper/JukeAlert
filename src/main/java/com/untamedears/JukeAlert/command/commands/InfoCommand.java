@@ -2,9 +2,11 @@ package com.untamedears.JukeAlert.command.commands;
 
 import static com.untamedears.JukeAlert.util.Utility.findLookingAtOrClosestSnitch;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -46,30 +48,6 @@ public class InfoCommand extends PlayerCommand {
         setArguments(0, 6); // Max args = 6 because the action might be split into two
         setIdentifier("jainfo");
     }
-    
-    /**
-     * Attempts to match a string to one of the LoggedAction actions
-     * @param action - case insensitive
-     * @return The matching LoggedAction, or null if a matching action couldn't be found
-     */
-    private static LoggedAction decodeAction(String action){
-        // Strip quotes
-        if (action.startsWith("\"") && action.length() > 1){
-            action = action.substring(1);
-        }
-        if (action.endsWith("\"") && action.length() > 1){
-            action = action.substring(0,  action.length()-1);
-        }
-        action = action.toUpperCase();
-        for (LoggedAction a : LoggedAction.values()){
-            String actionName = a.toString().toUpperCase();
-            String actionDisp = a.toActionString().toUpperCase();
-            if (actionName.equals(action) || actionDisp.equals(action)){
-                return a;
-            }
-        }
-        return null;
-    }
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
@@ -89,39 +67,14 @@ public class InfoCommand extends PlayerCommand {
             boolean nextFlag = false;
             
             if (args.length > 0) {
-                
                 // Reassemble any arguments that are enclosed in quotes and were split
                 List<String> fixedArgs = new ArrayList<String>();
-                for (int pos=0; pos<args.length; pos++){
-                    String currArg = args[pos];
-                    if (currArg.contains("\"")){
-                        // Found the first quote. Scan ahead to assemble the rest of the argument (if there's another quote present)
-                        boolean secondQuotePresent = false;
-                        String joinedArg = currArg;
-                        int nextPos=pos+1;
-                        for (; nextPos<args.length; nextPos++){
-                            String nextArg = args[nextPos];
-                            if (nextArg.contains("\"")){
-                              secondQuotePresent = true;
-                              joinedArg += " " + nextArg;
-                              break;
-                          }
-                          else{
-                                joinedArg += " " + nextArg;
-                            }
-                        }
-                        if (secondQuotePresent){
-                            fixedArgs.add(joinedArg);
-                            pos = nextPos;
-                        }
-                        else{
-                            fixedArgs.add(currArg);
-                        }
-                    }
-                    else{
-                        fixedArgs.add(currArg);
-                    }
+                Scanner scanner = new Scanner(String.join(" ", args));
+                scanner.useDelimiter("\\s(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+                while (scanner.hasNext()){
+                    fixedArgs.add(scanner.next());
                 }
+                scanner.close();
                 
                 // Parse each argument
                 for (String arg : fixedArgs){
@@ -136,9 +89,14 @@ public class InfoCommand extends PlayerCommand {
                     }
                     else if (arg.startsWith("action=")){
                         if (arg.length() > 7){
-                            filterAction = decodeAction(arg.substring(7));
-                            if (filterAction == null){
-                                sender.sendMessage(ChatColor.RED + "Couldn't parse action type '" + arg.substring(7) + "'");
+                            String action = arg.substring(7);
+                            // Strip quotes
+                            action = action.replaceAll("^[\"']|[\"']$", "");
+                            try{
+                                filterAction = LoggedAction.fromString(action);
+                            }
+                            catch (ParseException p){
+                                sender.sendMessage(ChatColor.RED + "Couldn't parse action type '" + action + "'");
                                 return false;
                             }
                             continue;
@@ -146,7 +104,18 @@ public class InfoCommand extends PlayerCommand {
                     }
                     else if (arg.startsWith("player=")){
                         if (arg.length() > 7){
-                            filterPlayer = arg.substring(7);
+                            String playerName = arg.substring(7);
+                            
+                            if (playerName.length() > 16){
+                                sender.sendMessage(ChatColor.RED + "Player names must be 16 characters or less");
+                                return false;
+                            }
+                            if (!playerName.matches("\\w+")){
+                                sender.sendMessage(ChatColor.RED + "Player names can only contain letters, numbers, and underscores");
+                                return false;
+                            }
+                            
+                            filterPlayer = playerName;
                             continue;
                         }
                     }
@@ -160,7 +129,8 @@ public class InfoCommand extends PlayerCommand {
                     sender.sendMessage(ChatColor.RED + "Unrecognized argument: '" + arg + "'");
                     return false;
                 }
-
+                
+                // If the 'next' argument was supplied, get the next page number (provided that the filters are all the same as last time)
                 if (nextFlag && playerPage_.containsKey(accountId)) {
                     final History hist = playerPage_.get(accountId);
                     if (hist != null && hist.snitchId == snitchId && hist.filterAction == filterAction && hist.filterPlayer.equals(filterPlayer)) {
