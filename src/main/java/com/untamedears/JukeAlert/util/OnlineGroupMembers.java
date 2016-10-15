@@ -84,9 +84,9 @@ public class OnlineGroupMembers implements Iterable<Player>, Iterator<Player> {
             throw new UnsupportedOperationException();
         }
         skipList_ = list;
-    	
-		return this;
-    	
+        
+        return this;
+        
     }
 
     @Override  // Iterator<Player>
@@ -132,7 +132,7 @@ public class OnlineGroupMembers implements Iterable<Player>, Iterator<Player> {
         if (group != null) {
             Player player = Bukkit.getPlayer(group.getOwner());
             if (player != null)
-            	return player;
+                return player;
         }
         return null;
     }
@@ -143,8 +143,8 @@ public class OnlineGroupMembers implements Iterable<Player>, Iterator<Player> {
             Group g = GroupManager.getGroup(groupName_);
             List<OfflinePlayer> mods = new ArrayList<OfflinePlayer>();
             for (UUID uuid: uuids)
-            	if (g.getPlayerType(uuid) != PlayerType.MEMBERS && !g.isOwner(uuid))
-            		mods.add(Bukkit.getOfflinePlayer(uuid));
+                if (g.getPlayerType(uuid) != PlayerType.MEMBERS && !g.isOwner(uuid))
+                    mods.add(Bukkit.getOfflinePlayer(uuid));
             mods_iter_ = mods.iterator();
         }
         while (mods_iter_.hasNext()) {
@@ -160,13 +160,13 @@ public class OnlineGroupMembers implements Iterable<Player>, Iterator<Player> {
 
     private Player getNextMember() {
         if (member_iter_ == null) {
-        	List<UUID> uuids = GroupManager.getGroup(groupName_).getAllMembers();
-        	List<OfflinePlayer> members = new ArrayList<OfflinePlayer>();
+            List<UUID> uuids = GroupManager.getGroup(groupName_).getAllMembers();
+            List<OfflinePlayer> members = new ArrayList<OfflinePlayer>();
             for (UUID uuid: uuids){
-            	Group g = GroupManager.getGroup(groupName_);
-            	if (g.getPlayerType(uuid) == PlayerType.MEMBERS && !g.getOwner().equals(uuid)) {
-            		members.add(Bukkit.getOfflinePlayer(uuid));
-            	}
+                Group g = GroupManager.getGroup(groupName_);
+                if (g.getPlayerType(uuid) == PlayerType.MEMBERS && !g.getOwner().equals(uuid)) {
+                    members.add(Bukkit.getOfflinePlayer(uuid));
+                }
             member_iter_ = members.iterator();
             }
         }

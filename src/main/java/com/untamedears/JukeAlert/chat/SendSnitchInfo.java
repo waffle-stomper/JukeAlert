@@ -18,34 +18,34 @@ import com.untamedears.JukeAlert.storage.JukeAlertLogger;
 
 
 public class SendSnitchInfo implements Runnable {
-	private List<SnitchAction> info;
-	private Player player;
-	private int offset;
+    private List<SnitchAction> info;
+    private Player player;
+    private int offset;
     private String snitchName;
-	private boolean shouldCensor;
-	private boolean isGroup;
+    private boolean shouldCensor;
+    private boolean isGroup;
 
-	public SendSnitchInfo(List<SnitchAction> info, Player player, int offset, String snitchName, boolean shouldCensor, boolean isGroup) {
-		this.info = info;
-		this.player = player;
-		this.offset = offset;
+    public SendSnitchInfo(List<SnitchAction> info, Player player, int offset, String snitchName, boolean shouldCensor, boolean isGroup) {
+        this.info = info;
+        this.player = player;
+        this.offset = offset;
         this.snitchName = snitchName;
-		this.shouldCensor = shouldCensor;
+        this.shouldCensor = shouldCensor;
         if (this.snitchName != null && this.snitchName.length() > 32) {
             this.snitchName = this.snitchName.substring(0, 32);
         }
         this.isGroup = isGroup;
     }
-	
+    
     public void run() {
-		if (info != null && !info.isEmpty()) {
-			String output = "";
-			
+        if (info != null && !info.isEmpty()) {
+            String output = "";
+            
             if (this.snitchName != null) {
-			    output += ChatColor.WHITE + " Snitch Log for " + this.snitchName + " "
+                output += ChatColor.WHITE + " Snitch Log for " + this.snitchName + " "
                        + ChatColor.DARK_GRAY + "-----------------------------------".substring(this.snitchName.length()) + "\n";
             } else {
-			    output += ChatColor.WHITE + " Snitch Log " + ChatColor.DARK_GRAY + "----------------------------------------" + "\n";
+                output += ChatColor.WHITE + " Snitch Log " + ChatColor.DARK_GRAY + "----------------------------------------" + "\n";
             }
             
             try {            
@@ -82,19 +82,19 @@ public class SendSnitchInfo implements Runnable {
             output += id.replaceFirst(",", "") + (id.length() > 1 ? "\n" : "");
             
             // Build table of entries
-			output += ChatColor.GRAY + String.format("  %s %s %s", ChatFiller.fillString("Name", (double) 22), ChatFiller.fillString("Reason", (double) 22), ChatFiller.fillString("Details", (double) 30)) + "\n";
-			for (SnitchAction entry : info){
-			    output += JukeAlertLogger.createInfoString(entry, this.shouldCensor, this.isGroup) + "\n";
-			}
+            output += ChatColor.GRAY + String.format("  %s %s %s", ChatFiller.fillString("Name", (double) 22), ChatFiller.fillString("Reason", (double) 22), ChatFiller.fillString("Details", (double) 30)) + "\n";
+            for (SnitchAction entry : info){
+                output += JukeAlertLogger.createInfoString(entry, this.shouldCensor, this.isGroup) + "\n";
+            }
 
-			output += "\n";
-			output += ChatColor.DARK_GRAY + " * Page " + offset + " ------------------------------------------";
-			player.sendMessage(output);
-		} else if (this.snitchName != null) {
-			player.sendMessage(ChatColor.AQUA + " * Page " + offset + " is empty for snitch " + this.snitchName);
+            output += "\n";
+            output += ChatColor.DARK_GRAY + " * Page " + offset + " ------------------------------------------";
+            player.sendMessage(output);
+        } else if (this.snitchName != null) {
+            player.sendMessage(ChatColor.AQUA + " * Page " + offset + " is empty for snitch " + this.snitchName);
         } else {
-			player.sendMessage(ChatColor.AQUA + " * Page " + offset + " is empty");
-		}
+            player.sendMessage(ChatColor.AQUA + " * Page " + offset + " is empty");
+        }
 
-	}
+    }
 }

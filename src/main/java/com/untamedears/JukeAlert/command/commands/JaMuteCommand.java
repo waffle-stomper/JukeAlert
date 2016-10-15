@@ -14,24 +14,24 @@ import com.untamedears.JukeAlert.JukeAlert;
 import com.untamedears.JukeAlert.util.IgnoreList;
 
 public class JaMuteCommand extends PlayerCommand {
-	
-	public JaMuteCommand() {
-		super("jamute");
-		setDescription("Mutes/Unmutes notifications from a given snitch group.");
-		setUsage("/jamute <group>");
-		setArguments(0,1);
-		setIdentifier("jamute");
-	}
-	
+    
+    public JaMuteCommand() {
+        super("jamute");
+        setDescription("Mutes/Unmutes notifications from a given snitch group.");
+        setUsage("/jamute <group>");
+        setArguments(0,1);
+        setIdentifier("jamute");
+    }
+    
    @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
-        	
-        	if (args.length == 0) {
-        		sendIgnoreGroupList(sender);
-        	} else {
-        		toggleIgnore(sender, args[0].toString());
-        	}
+            
+            if (args.length == 0) {
+                sendIgnoreGroupList(sender);
+            } else {
+                toggleIgnore(sender, args[0].toString());
+            }
 
         } else {
             sender.sendMessage(ChatColor.RED + " You do not have the ability to ignore groups!");
@@ -54,30 +54,30 @@ public class JaMuteCommand extends PlayerCommand {
        }
        
        if(plugin.getJaLogger().getMutedGroups(accountId) == null){
-    	   //no groups mute first group
-    	   plugin.getJaLogger().muteGroups(accountId, groupName);
-    	   player.sendMessage("Added group \"" + groupName + "\" to ignore list! \n "
-       	   		+ "Use /jamute on this group again to unmute");
-    	   return;
+           //no groups mute first group
+           plugin.getJaLogger().muteGroups(accountId, groupName);
+           player.sendMessage("Added group \"" + groupName + "\" to ignore list! \n "
+                      + "Use /jamute on this group again to unmute");
+           return;
        }
        
        List<String> groups = (Arrays.asList(plugin.getJaLogger().getMutedGroups(accountId).split("\\s+")));
        
        if(groups.contains(groupName)){
-    	     //unmute the group if its in their list
-    	   plugin.getJaLogger().removeIgnoredGroup(groupName,  accountId);
-    	   player.sendMessage("Removed group \"" + groupName + "\" from ignore list!");
+             //unmute the group if its in their list
+           plugin.getJaLogger().removeIgnoredGroup(groupName,  accountId);
+           player.sendMessage("Removed group \"" + groupName + "\" from ignore list!");
        }else{
-    	   //add the group
-    	   plugin.getJaLogger().updateMutedGroups(accountId, groupName);
-    	   player.sendMessage("Added group \"" + groupName + "\" to ignore list! \n "
-    	   		+ "Use /jamute on this group again to unmute");
-    	   
+           //add the group
+           plugin.getJaLogger().updateMutedGroups(accountId, groupName);
+           player.sendMessage("Added group \"" + groupName + "\" to ignore list! \n "
+                   + "Use /jamute on this group again to unmute");
+           
        }
    }
 
     private void sendIgnoreGroupList(CommandSender sender) {
-    	JukeAlert plugin = JukeAlert.getInstance();
+        JukeAlert plugin = JukeAlert.getInstance();
         final Player player = (Player) sender;
         final UUID accountId = player.getUniqueId();
         if (IgnoreList.doesPlayerIgnoreAll(accountId)) {
@@ -89,32 +89,32 @@ public class JaMuteCommand extends PlayerCommand {
         String ignoredGroups = plugin.getJaLogger().getMutedGroups(accountId);
         plugin.log("Ignored Groups for Player is: " + ignoredGroups);
         if(ignoredGroups == null){
-        	sender.sendMessage("* No Group Ignores");
+            sender.sendMessage("* No Group Ignores");
         }
         else{
         
-	        String[] groups = ignoredGroups.split("\\s+");
-	        StringBuilder sb = new StringBuilder();
-        	for(String g : groups) {
-        		sb.append(g);
-        		sb.append(", ");
-        		
-        		if (sb.length() > 100) {
-        			sb.delete(101, sb.length());
-        			sb.append("...  ");
-        			break;
-        		}
-        	}
-        	sb.delete(sb.length()-2, sb.length());
-        	
-        	sb.insert(0,  "Ignore List:  ");
+            String[] groups = ignoredGroups.split("\\s+");
+            StringBuilder sb = new StringBuilder();
+            for(String g : groups) {
+                sb.append(g);
+                sb.append(", ");
+                
+                if (sb.length() > 100) {
+                    sb.delete(101, sb.length());
+                    sb.append("...  ");
+                    break;
+                }
+            }
+            sb.delete(sb.length()-2, sb.length());
+            
+            sb.insert(0,  "Ignore List:  ");
             
             sender.sendMessage(sb.toString());
         }
     }
 
-	@Override
-	public List<String> tabComplete(CommandSender sender, String[] args) {
-		return null;
-	}
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return null;
+    }
 }

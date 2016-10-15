@@ -37,16 +37,16 @@ public class Utility {
         final JukeAlert plugin = JukeAlert.getInstance();
         Set<String> skipUUID = plugin.getJaLogger().getIgnoreUUIDs(g.getName());
         if(skipUUID == null){
-        	//this should be fine as it is how it used to be done
-        	skipUUID = null;
+            //this should be fine as it is how it used to be done
+            skipUUID = null;
         }
         OnlineGroupMembers iter = OnlineGroupMembers
             .get(g.getName())
             .skipList(skipUUID);
         for (Player player : iter) {
-        	if (NameAPI.getGroupManager().hasAccess(g, player.getUniqueId(), PermissionType.getPermission("SNITCH_NOTIFICATIONS"))) {
-        		RateLimiter.sendMessage(player, message);
-        	}
+            if (NameAPI.getGroupManager().hasAccess(g, player.getUniqueId(), PermissionType.getPermission("SNITCH_NOTIFICATIONS"))) {
+                RateLimiter.sendMessage(player, message);
+            }
         }
     }
 
@@ -56,8 +56,8 @@ public class Utility {
         final JukeAlert plugin = JukeAlert.getInstance();
         Set<String> skipUUID = plugin.getJaLogger().getIgnoreUUIDs(sG.getName());
         if(skipUUID == null){
-        	//this should be fine as it is how it used to be done
-        	skipUUID = null;
+            //this should be fine as it is how it used to be done
+            skipUUID = null;
         }
         OnlineGroupMembers iter = OnlineGroupMembers
             .get(sG.getName())
@@ -67,19 +67,19 @@ public class Utility {
             iter.maxDistance(JukeAlert.getInstance().getConfigManager().getMaxAlertDistanceNs());
         }
         for (Player player : iter) {
-        	if (NameAPI.getGroupManager().hasAccess(snitch.getGroup(), player.getUniqueId(), PermissionType.getPermission("SNITCH_NOTIFICATIONS"))) {
-        		RateLimiter.sendMessage(player, message);
-        	}
+            if (NameAPI.getGroupManager().hasAccess(snitch.getGroup(), player.getUniqueId(), PermissionType.getPermission("SNITCH_NOTIFICATIONS"))) {
+                RateLimiter.sendMessage(player, message);
+            }
         }
     }
     
     public static boolean immuneToSnitch(Snitch snitch, UUID accountId) {
-    	Group group = snitch.getGroup();
-    	if(group == null) {
-    		return true;
-    	}
-    	//group object might be outdated so use name
-    	return NameAPI.getGroupManager().hasAccess(group.getName(), accountId, PermissionType.getPermission("SNITCH_IMMUNE"));
+        Group group = snitch.getGroup();
+        if(group == null) {
+            return true;
+        }
+        //group object might be outdated so use name
+        return NameAPI.getGroupManager().hasAccess(group.getName(), accountId, PermissionType.getPermission("SNITCH_IMMUNE"));
     }
     
     
@@ -137,7 +137,7 @@ public class Utility {
     } */
     
     public static Snitch findClosestSnitch(Location loc, PermissionType perm, UUID player) {
-    	Snitch closestSnitch = null;
+        Snitch closestSnitch = null;
         double closestDistance = Double.MAX_VALUE;
         Set<Snitch> snitches = JukeAlert.getInstance().getSnitchManager().findSnitches(loc.getWorld(), loc);
         for (final Snitch snitch : snitches) {
@@ -153,8 +153,8 @@ public class Utility {
     }
     
     public static Snitch findLookingAtOrClosestSnitch(Player player, PermissionType perm) {
-    	Snitch cursorSnitch = getSnitchUnderCursor(player);
-    	if (cursorSnitch != null
+        Snitch cursorSnitch = getSnitchUnderCursor(player);
+        if (cursorSnitch != null
                 && doesSnitchExist(cursorSnitch, true) && NameAPI.getGroupManager().hasAccess(cursorSnitch.getGroup(), player.getUniqueId(), perm)) {
             return cursorSnitch;
         }

@@ -41,8 +41,8 @@ public class ConfigCommand extends PlayerCommand {
         return true;
     }
 
-	@Override
-	public List<String> tabComplete(CommandSender sender, String[] args) {
-		return null;
-	}
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return null;
+    }
 }

@@ -72,7 +72,7 @@ import vg.civcraft.mc.namelayer.permission.PermissionType;
 
 public class JukeAlertListener implements Listener {
 
-	private ReinforcementManager rm = Citadel.getReinforcementManager();
+    private ReinforcementManager rm = Citadel.getReinforcementManager();
     private final JukeAlert plugin = JukeAlert.getInstance();
     SnitchManager snitchManager = plugin.getSnitchManager();
     private final Map<UUID, Set<Snitch>> playersInSnitches = new TreeMap<UUID, Set<Snitch>>();
@@ -107,20 +107,20 @@ public class JukeAlertListener implements Listener {
                 inList.add(snitch);
                 try {
                 String message = " * " + player.getDisplayName() + " logged in to snitch at " 
-				        + snitch.getName() + " [" + snitch.getLoc().getWorld().getName() + " " + snitch.getX() + 
-				        " " + snitch.getY() + " " + snitch.getZ() + "]";
+                        + snitch.getName() + " [" + snitch.getLoc().getWorld().getName() + " " + snitch.getX() + 
+                        " " + snitch.getY() + " " + snitch.getZ() + "]";
                 notifyGroup(snitch, ChatColor.AQUA+message);
                                 
                 if (mercury.isEnabled() && plugin.getConfigManager().getBroadcastAllServers())
-                	mercury.sendMessage(snitch.getGroup().getName() + " " + message, "jukealert-login");
+                    mercury.sendMessage(snitch.getGroup().getName() + " " + message, "jukealert-login");
                 } catch (SQLException e) {
-					e.printStackTrace();
-				}
+                    e.printStackTrace();
+                }
                 if (snitch.shouldLog()) {
                     plugin.getJaLogger().logSnitchLogin(snitch, location, player);
 
-                	Location north = new Location(world, snitch.getX(), snitch.getY(), snitch.getZ()-1);
-                	toggleLeverIfApplicable(snitch, north, true);
+                    Location north = new Location(world, snitch.getX(), snitch.getY(), snitch.getZ()-1);
+                    toggleLeverIfApplicable(snitch, north, true);
                 }
             }
         }
@@ -143,15 +143,15 @@ public class JukeAlertListener implements Listener {
                 snitch.imposeSnitchTax();
                 try {
                 String message = " * " + player.getDisplayName() + " logged out in snitch at " 
-		        		+ snitch.getName() + " [" + snitch.getLoc().getWorld().getName() + " " + snitch.getX() + 
-		                " " + snitch.getY() + " " + snitch.getZ() + "]";
+                        + snitch.getName() + " [" + snitch.getLoc().getWorld().getName() + " " + snitch.getX() + 
+                        " " + snitch.getY() + " " + snitch.getZ() + "]";
                 notifyGroup(snitch, ChatColor.AQUA+message);
                 
                 if (mercury.isEnabled() && plugin.getConfigManager().getBroadcastAllServers())
-                	mercury.sendMessage(snitch.getGroup().getName() + " " + message, "jukealert-logout");
+                    mercury.sendMessage(snitch.getGroup().getName() + " " + message, "jukealert-logout");
                 } catch (SQLException e) {
-					e.printStackTrace();
-				}
+                    e.printStackTrace();
+                }
                 if (snitch.shouldLog()) {
                     plugin.getJaLogger().logSnitchLogout(snitch, location, player);
                 }
@@ -204,7 +204,7 @@ public class JukeAlertListener implements Listener {
                 Group owner = reinforcement.getGroup();
                 if (owner == null) {
                     JukeAlert.getInstance().log(String.format(
-                    		"No group on rein (%s)", reinforcement.getLocation().toString()));
+                            "No group on rein (%s)", reinforcement.getLocation().toString()));
                 }
                     Snitch snitch;
                     if (snitchManager.getSnitch(loc.getWorld(), loc) != null) {
@@ -277,32 +277,32 @@ public class JukeAlertListener implements Listener {
     
     @EventHandler
     public void onGroupEvent(GroupInvalidationEvent event) {
-    	String reason = event.getReason();
-    	if (reason.equalsIgnoreCase("delete")) {
-	        String groupName = event.getParameter() [0];
-	        Set<Snitch> removeSet = new TreeSet<Snitch>();
-	        for (Snitch snitch : snitchManager.getAllSnitches()) {
-	            final Group snitchGroup = snitch.getGroup();
-	            String snitchGroupName = null;
-	            if (snitchGroup != null) {
-	                snitchGroupName = snitchGroup.getName();
-	            }
-	            if (snitchGroupName != null && snitchGroupName.equalsIgnoreCase(groupName)) {
-	                removeSet.add(snitch);
-	            }
-	        }
-	        for (Snitch snitch : removeSet) {
-	            final Location loc = snitch.getLoc();
-	            if (snitch.shouldLog()) {
-	                plugin.getJaLogger().logSnitchBreak(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-	            }
-	            snitchManager.removeSnitch(snitch);
-	        }
-    	}
-    	else if (reason.equalsIgnoreCase("merge")) {
-    		String group1 = event.getParameter() [0];
-    		String group2 = event.getParameter() [1];
-    		Group g1 = GroupManager.getGroup(group1);
+        String reason = event.getReason();
+        if (reason.equalsIgnoreCase("delete")) {
+            String groupName = event.getParameter() [0];
+            Set<Snitch> removeSet = new TreeSet<Snitch>();
+            for (Snitch snitch : snitchManager.getAllSnitches()) {
+                final Group snitchGroup = snitch.getGroup();
+                String snitchGroupName = null;
+                if (snitchGroup != null) {
+                    snitchGroupName = snitchGroup.getName();
+                }
+                if (snitchGroupName != null && snitchGroupName.equalsIgnoreCase(groupName)) {
+                    removeSet.add(snitch);
+                }
+            }
+            for (Snitch snitch : removeSet) {
+                final Location loc = snitch.getLoc();
+                if (snitch.shouldLog()) {
+                    plugin.getJaLogger().logSnitchBreak(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+                }
+                snitchManager.removeSnitch(snitch);
+            }
+        }
+        else if (reason.equalsIgnoreCase("merge")) {
+            String group1 = event.getParameter() [0];
+            String group2 = event.getParameter() [1];
+            Group g1 = GroupManager.getGroup(group1);
             Set<Snitch> mergeSet = new TreeSet<Snitch>();
             for (Snitch snitch : snitchManager.getAllSnitches()) {
                 final Group snitchGroup = snitch.getGroup();
@@ -311,20 +311,20 @@ public class JukeAlertListener implements Listener {
                     snitchGroupName = snitchGroup.getName();
                 }
                 if (snitchGroupName != null && snitchGroupName.equalsIgnoreCase(group2)) {
-                	mergeSet.add(snitch);
+                    mergeSet.add(snitch);
                 }
             }
             for (Snitch snitch : mergeSet) {
-            	snitch.setGroup(g1);
+                snitch.setGroup(g1);
             }
-    	}
+        }
     }
     
     @EventHandler(priority = EventPriority.HIGH)
     public void onGroupMergeEvent(GroupMergeEvent event){
-    	Group g1 = event.getMergingInto();
-    	Group g2 = event.getToBeMerged();
-    	String groupName = g2.getName();
+        Group g1 = event.getMergingInto();
+        Group g2 = event.getToBeMerged();
+        String groupName = g2.getName();
         Set<Snitch> mergeSet = new TreeSet<Snitch>();
         for (Snitch snitch : snitchManager.getAllSnitches()) {
             final Group snitchGroup = snitch.getGroup();
@@ -333,11 +333,11 @@ public class JukeAlertListener implements Listener {
                 snitchGroupName = snitchGroup.getName();
             }
             if (snitchGroupName != null && snitchGroupName.equalsIgnoreCase(groupName)) {
-            	mergeSet.add(snitch);
+                mergeSet.add(snitch);
             }
         }
         for (Snitch snitch : mergeSet) {
-        	snitch.setGroup(g1);
+            snitch.setGroup(g1);
         }
     }
 
@@ -348,9 +348,9 @@ public class JukeAlertListener implements Listener {
             Snitch snitch = snitchManager.getSnitch(block.getWorld(), block.getLocation());
             if(snitch != null && !snitch.getGroup().isMember(event.getPlayer().getUniqueId())) {
                 Location loc = snitch.getLoc();
-        	event.getPlayer().sendMessage(ChatColor.AQUA + "Snitch at [" + loc.getWorld().getName() + " " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "] is owned by " 
+            event.getPlayer().sendMessage(ChatColor.AQUA + "Snitch at [" + loc.getWorld().getName() + " " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + "] is owned by " 
                 + NameAPI.getCurrentName(snitch.getGroup().getOwner()) + " and is on group: " + snitch.getGroup().getName());
-       	    }
+               }
         }
         if (!block.getType().equals(Material.JUKEBOX)) {
             return;
@@ -373,189 +373,189 @@ public class JukeAlertListener implements Listener {
     
     @EventHandler(priority = EventPriority.HIGH)
     public void enterSnitchProximity(PlayerMoveEvent event) {
-    	try {
-	    	Location from = event.getFrom();
-	        Location to = event.getTo();
-	        if (from == null || to == null) {
-	        	if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
-	        		JukeAlert.getInstance().getLogger().log(Level.WARNING, "MoveEvent called without valid from and to.");
-	        		lastNotifyMoveFailure = System.currentTimeMillis();
-	        	}
-	        	return;
-	        }
-	
-	        if (from.getBlockX() == to.getBlockX()
-	                && from.getBlockY() == to.getBlockY()
-	                && from.getBlockZ() == to.getBlockZ()
-	                && from.getWorld().equals(to.getWorld())) {
-	            // Player didn't move by at least one block.
-	            return;
-	        }
-	        Player player = event.getPlayer();
-	        if (player == null) {
-	        	if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
-	        		JukeAlert.getInstance().getLogger().log(Level.WARNING, "MoveEvent called without valid player.");
-	        		lastNotifyMoveFailure = System.currentTimeMillis();
-	        	}
-	        	return;
-	        }
-	        handleSnitchEntry(player);
-    	} catch (NullPointerException npe) {
-        	if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
-        		JukeAlert.getInstance().getLogger().log(Level.SEVERE, "MoveEvent generated an NPE", npe);
-        		lastNotifyMoveFailure = System.currentTimeMillis();
-        	}    		
-    	}
+        try {
+            Location from = event.getFrom();
+            Location to = event.getTo();
+            if (from == null || to == null) {
+                if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
+                    JukeAlert.getInstance().getLogger().log(Level.WARNING, "MoveEvent called without valid from and to.");
+                    lastNotifyMoveFailure = System.currentTimeMillis();
+                }
+                return;
+            }
+    
+            if (from.getBlockX() == to.getBlockX()
+                    && from.getBlockY() == to.getBlockY()
+                    && from.getBlockZ() == to.getBlockZ()
+                    && from.getWorld().equals(to.getWorld())) {
+                // Player didn't move by at least one block.
+                return;
+            }
+            Player player = event.getPlayer();
+            if (player == null) {
+                if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
+                    JukeAlert.getInstance().getLogger().log(Level.WARNING, "MoveEvent called without valid player.");
+                    lastNotifyMoveFailure = System.currentTimeMillis();
+                }
+                return;
+            }
+            handleSnitchEntry(player);
+        } catch (NullPointerException npe) {
+            if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
+                JukeAlert.getInstance().getLogger().log(Level.SEVERE, "MoveEvent generated an NPE", npe);
+                lastNotifyMoveFailure = System.currentTimeMillis();
+            }            
+        }
     }
     
     //Because teleporting doesn't trigger a movement event :/
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-    	Player player = event.getPlayer();
+        Player player = event.getPlayer();
         handleSnitchEntry(player);
     }
     
-	private void handleSnitchEntry(Player player) {
-		if (vanishNoPacket.isPlayerInvisible(player) || player.hasPermission("jukealert.vanish")) {
-			return;
-		}
-		UUID accountId = player.getUniqueId();
-		Location location = player.getLocation();
-		World world = location.getWorld();
-		Set<Snitch> inList = playersInSnitches.get(accountId);
-		if (inList == null) {
-			inList = new TreeSet<Snitch>();
-			playersInSnitches.put(accountId, inList);
-		}
-		Set<Snitch> snitches = snitchManager.findSnitches(world, location);
-		for (Snitch snitch : snitches) {
-			if (doesSnitchExist(snitch, true)) {
+    private void handleSnitchEntry(Player player) {
+        if (vanishNoPacket.isPlayerInvisible(player) || player.hasPermission("jukealert.vanish")) {
+            return;
+        }
+        UUID accountId = player.getUniqueId();
+        Location location = player.getLocation();
+        World world = location.getWorld();
+        Set<Snitch> inList = playersInSnitches.get(accountId);
+        if (inList == null) {
+            inList = new TreeSet<Snitch>();
+            playersInSnitches.put(accountId, inList);
+        }
+        Set<Snitch> snitches = snitchManager.findSnitches(world, location);
+        for (Snitch snitch : snitches) {
+            if (doesSnitchExist(snitch, true)) {
 
-				try {
-					//refresh cull timer of snitch
-					if (NameAPI.getGroupManager().hasAccess(snitch.getGroup(), player.getUniqueId(), PermissionType.getPermission("LIST_SNITCHES"))) {
-						if (!inList.contains(snitch)) {
-							inList.add(snitch);
-							plugin.getJaLogger().logSnitchVisit(snitch);
-						}
-					}
-				} catch (NullPointerException npe) {
-					if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
-						JukeAlert.getInstance().getLogger().log(Level.SEVERE,
-								"handleSnitchEntry isPartialOwnerOfSnitch generated an exception", npe);
-						lastNotifyMoveFailure = System.currentTimeMillis();
-					}
-				}
+                try {
+                    //refresh cull timer of snitch
+                    if (NameAPI.getGroupManager().hasAccess(snitch.getGroup(), player.getUniqueId(), PermissionType.getPermission("LIST_SNITCHES"))) {
+                        if (!inList.contains(snitch)) {
+                            inList.add(snitch);
+                            plugin.getJaLogger().logSnitchVisit(snitch);
+                        }
+                    }
+                } catch (NullPointerException npe) {
+                    if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
+                        JukeAlert.getInstance().getLogger().log(Level.SEVERE,
+                                "handleSnitchEntry isPartialOwnerOfSnitch generated an exception", npe);
+                        lastNotifyMoveFailure = System.currentTimeMillis();
+                    }
+                }
 
-				try {
-					if ((!immuneToSnitch(snitch, accountId) || isDebugging())) {
-						if (!inList.contains(snitch)) {
-							snitch.imposeSnitchTax();
-							inList.add(snitch);
-							if ((plugin.getConfigManager().getInvisibilityEnabled() && player
-									.hasPotionEffect(PotionEffectType.INVISIBILITY)) && !snitch.shouldLog())
-								continue;
-							else {
-								try {
-									String message = " * " + player.getDisplayName() + " entered snitch at "
-											+ snitch.getName() + " [" + snitch.getLoc().getWorld().getName() + " "
-											+ snitch.getX() + " " + snitch.getY() + " " + snitch.getZ() + "]";
-									notifyGroup(snitch, ChatColor.AQUA + message);
+                try {
+                    if ((!immuneToSnitch(snitch, accountId) || isDebugging())) {
+                        if (!inList.contains(snitch)) {
+                            snitch.imposeSnitchTax();
+                            inList.add(snitch);
+                            if ((plugin.getConfigManager().getInvisibilityEnabled() && player
+                                    .hasPotionEffect(PotionEffectType.INVISIBILITY)) && !snitch.shouldLog())
+                                continue;
+                            else {
+                                try {
+                                    String message = " * " + player.getDisplayName() + " entered snitch at "
+                                            + snitch.getName() + " [" + snitch.getLoc().getWorld().getName() + " "
+                                            + snitch.getX() + " " + snitch.getY() + " " + snitch.getZ() + "]";
+                                    notifyGroup(snitch, ChatColor.AQUA + message);
 
-									if (mercury.isEnabled() && plugin.getConfigManager().getBroadcastAllServers()) {
-										Group g = snitch.getGroup();
-										if (g != null) {
-											mercury.sendMessage(g.getName() + " " + message, "jukealert-entry");
-										} else {
-											if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
-												JukeAlert.getInstance().getLogger().log(Level.WARNING,
-																"Null group encountered when constructing Mercury Message: {0}",
-																message);
-												lastNotifyMoveFailure = System.currentTimeMillis();
-											}
-										}
-									}
-								} catch (SQLException | NullPointerException e) {
-									if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
-										JukeAlert.getInstance().getLogger()
-												.log(Level.SEVERE, "handleSnitchEntry generated an exception", e);
-										lastNotifyMoveFailure = System.currentTimeMillis();
-									}
-								}
-							}
-							if (snitch.shouldLog()) {
-								plugin.getJaLogger().logSnitchEntry(snitch, location, player);
-								Location north = new Location(world, snitch.getX(), snitch.getY(), snitch.getZ() - 1);
-								toggleLeverIfApplicable(snitch, north, true);
-							}
-						}
-					}
-				} catch (NullPointerException npe) {
-					if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
-						JukeAlert.getInstance().getLogger().log(Level.SEVERE, 
-								"handleSnitchEntry isOnSnitch or contained generated an exception", npe);
-						lastNotifyMoveFailure = System.currentTimeMillis();
-					}
-				}
-			}
-		}
-		snitches = snitchManager.findSnitches(world, location, true);
-		Set<Snitch> rmList = new TreeSet<Snitch>();
-		for (Snitch snitch : inList) {
-			if (snitches.contains(snitch)) {
-				continue;
-			}
-			rmList.add(snitch);
-		}
-		inList.removeAll(rmList);
-	}
+                                    if (mercury.isEnabled() && plugin.getConfigManager().getBroadcastAllServers()) {
+                                        Group g = snitch.getGroup();
+                                        if (g != null) {
+                                            mercury.sendMessage(g.getName() + " " + message, "jukealert-entry");
+                                        } else {
+                                            if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
+                                                JukeAlert.getInstance().getLogger().log(Level.WARNING,
+                                                                "Null group encountered when constructing Mercury Message: {0}",
+                                                                message);
+                                                lastNotifyMoveFailure = System.currentTimeMillis();
+                                            }
+                                        }
+                                    }
+                                } catch (SQLException | NullPointerException e) {
+                                    if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
+                                        JukeAlert.getInstance().getLogger()
+                                                .log(Level.SEVERE, "handleSnitchEntry generated an exception", e);
+                                        lastNotifyMoveFailure = System.currentTimeMillis();
+                                    }
+                                }
+                            }
+                            if (snitch.shouldLog()) {
+                                plugin.getJaLogger().logSnitchEntry(snitch, location, player);
+                                Location north = new Location(world, snitch.getX(), snitch.getY(), snitch.getZ() - 1);
+                                toggleLeverIfApplicable(snitch, north, true);
+                            }
+                        }
+                    }
+                } catch (NullPointerException npe) {
+                    if (System.currentTimeMillis() - lastNotifyMoveFailure > failureReportDelay) {
+                        JukeAlert.getInstance().getLogger().log(Level.SEVERE, 
+                                "handleSnitchEntry isOnSnitch or contained generated an exception", npe);
+                        lastNotifyMoveFailure = System.currentTimeMillis();
+                    }
+                }
+            }
+        }
+        snitches = snitchManager.findSnitches(world, location, true);
+        Set<Snitch> rmList = new TreeSet<Snitch>();
+        for (Snitch snitch : inList) {
+            if (snitches.contains(snitch)) {
+                continue;
+            }
+            rmList.add(snitch);
+        }
+        inList.removeAll(rmList);
+    }
     
     // Exceptions:  No exceptions must be raised from this for any reason.
     private void toggleLeverIfApplicable(final Snitch snitch, final Location blockToPossiblyToggle, final Boolean leverShouldEnable)
     {
-    	try
-    	{
-    		if(!JukeAlert.getInstance().getConfigManager().getAllowTriggeringLevers()) return;
-	    	if (null == snitch) return;
-	    	
-	    	World world = snitch.getLoc().getWorld();
-	    	if(snitch.shouldToggleLevers())
-	        {
-	        	if (world.getBlockAt(blockToPossiblyToggle).getType() == Material.LEVER)
-	        	{
-	        		BlockState leverState = world.getBlockAt(blockToPossiblyToggle).getState();
-	        		Lever lever = ((Lever)leverState.getData());
-	        		
-	        		if(leverShouldEnable && !lever.isPowered())
-	        		{
-	        			lever.setPowered(true);
-		        		leverState.setData(lever);
-		        		leverState.update();
-	        		}
-	        		else if (!leverShouldEnable && lever.isPowered())
-	        		{
-	        			lever.setPowered(false);
-		        		leverState.setData(lever);
-		        		leverState.update();
-	        		}
-	        		
-	        		if (leverShouldEnable)
-	        		{
-		        		BukkitScheduler scheduler = plugin.getServer().getScheduler();
-			        	scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
-		                    public void run() {
-		                    	toggleLeverIfApplicable(snitch, blockToPossiblyToggle, false);
-		                    }
-		                }, 15L);
-	        		}
-	        	}
-	        }
-    	}
-    	catch(Exception ex)
-    	{
-    		// eat.
-    		return;
-    	}
+        try
+        {
+            if(!JukeAlert.getInstance().getConfigManager().getAllowTriggeringLevers()) return;
+            if (null == snitch) return;
+            
+            World world = snitch.getLoc().getWorld();
+            if(snitch.shouldToggleLevers())
+            {
+                if (world.getBlockAt(blockToPossiblyToggle).getType() == Material.LEVER)
+                {
+                    BlockState leverState = world.getBlockAt(blockToPossiblyToggle).getState();
+                    Lever lever = ((Lever)leverState.getData());
+                    
+                    if(leverShouldEnable && !lever.isPowered())
+                    {
+                        lever.setPowered(true);
+                        leverState.setData(lever);
+                        leverState.update();
+                    }
+                    else if (!leverShouldEnable && lever.isPowered())
+                    {
+                        lever.setPowered(false);
+                        leverState.setData(lever);
+                        leverState.update();
+                    }
+                    
+                    if (leverShouldEnable)
+                    {
+                        BukkitScheduler scheduler = plugin.getServer().getScheduler();
+                        scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
+                            public void run() {
+                                toggleLeverIfApplicable(snitch, blockToPossiblyToggle, false);
+                            }
+                        }, 15L);
+                    }
+                }
+            }
+        }
+        catch(Exception ex)
+        {
+            // eat.
+            return;
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -584,8 +584,8 @@ public class JukeAlertListener implements Listener {
                 if (checkProximity(snitch, accountId)) {
                     plugin.getJaLogger().logUsed(snitch, player, block);
                     
-                	Location south = new Location(block.getWorld(), snitch.getX(), snitch.getY(), snitch.getZ()+1);
-                	toggleLeverIfApplicable(snitch, south, true);
+                    Location south = new Location(block.getWorld(), snitch.getX(), snitch.getY(), snitch.getZ()+1);
+                    toggleLeverIfApplicable(snitch, south, true);
                 }
             }
         }
@@ -646,17 +646,17 @@ public class JukeAlertListener implements Listener {
     
     @EventHandler (priority = EventPriority.HIGH)
     public void playerMountEntity(EntityMountEvent e) {
-    	if (e.getEntityType() != EntityType.PLAYER) {
-    		return;
-    	}
-    	Player p = (Player) e.getEntity();
-    	Entity mount = e.getMount();
-    	if (vanishNoPacket.isPlayerInvisible(p) || p.hasPermission("jukealert.vanish")) {
+        if (e.getEntityType() != EntityType.PLAYER) {
             return;
         }
-    	UUID accountId = p.getUniqueId();
-    	Set<Snitch> snitches = snitchManager.findSnitches(p.getWorld(), p.getLocation());
-    	 for (Snitch snitch : snitches) {
+        Player p = (Player) e.getEntity();
+        Entity mount = e.getMount();
+        if (vanishNoPacket.isPlayerInvisible(p) || p.hasPermission("jukealert.vanish")) {
+            return;
+        }
+        UUID accountId = p.getUniqueId();
+        Set<Snitch> snitches = snitchManager.findSnitches(p.getWorld(), p.getLocation());
+         for (Snitch snitch : snitches) {
              if (!snitch.shouldLog()) {
                  continue;
              }
@@ -670,17 +670,17 @@ public class JukeAlertListener implements Listener {
     
     @EventHandler (priority = EventPriority.HIGH)
     public void playerDismountEntity(EntityDismountEvent e) {
-    	if (e.getEntityType() != EntityType.PLAYER) {
-    		return;
-    	}
-    	Player p = (Player) e.getEntity();
-    	Entity mount = e.getDismounted();
-    	if (vanishNoPacket.isPlayerInvisible(p) || p.hasPermission("jukealert.vanish")) {
+        if (e.getEntityType() != EntityType.PLAYER) {
             return;
         }
-    	UUID accountId = p.getUniqueId();
-    	Set<Snitch> snitches = snitchManager.findSnitches(p.getWorld(), p.getLocation());
-    	 for (Snitch snitch : snitches) {
+        Player p = (Player) e.getEntity();
+        Entity mount = e.getDismounted();
+        if (vanishNoPacket.isPlayerInvisible(p) || p.hasPermission("jukealert.vanish")) {
+            return;
+        }
+        UUID accountId = p.getUniqueId();
+        Set<Snitch> snitches = snitchManager.findSnitches(p.getWorld(), p.getLocation());
+         for (Snitch snitch : snitches) {
              if (!snitch.shouldLog()) {
                  continue;
              }
@@ -781,8 +781,8 @@ public class JukeAlertListener implements Listener {
             if (!immuneToSnitch(snitch, accountId) || isDebugging()) {
                 if (checkProximity(snitch, accountId)) {
                     plugin.getJaLogger().logSnitchBlockBreak(snitch, player, block);
-                	Location west = new Location(block.getWorld(), snitch.getX()-1, snitch.getY(), snitch.getZ());
-                	toggleLeverIfApplicable(snitch, west, true);
+                    Location west = new Location(block.getWorld(), snitch.getX()-1, snitch.getY(), snitch.getZ());
+                    toggleLeverIfApplicable(snitch, west, true);
                 }
             }
         }
@@ -810,7 +810,7 @@ public class JukeAlertListener implements Listener {
                     plugin.getJaLogger().logSnitchBlockPlace(snitch, player, block);
 
                     Location east = new Location(block.getWorld(), snitch.getX()+1, snitch.getY(), snitch.getZ());
-                	toggleLeverIfApplicable(snitch, east, true);
+                    toggleLeverIfApplicable(snitch, east, true);
                 }
             }
         }

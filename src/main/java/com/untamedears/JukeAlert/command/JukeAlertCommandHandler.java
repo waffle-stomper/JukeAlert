@@ -16,19 +16,19 @@ import vg.civcraft.mc.civmodcore.command.CommandHandler;
 
 public class JukeAlertCommandHandler extends CommandHandler {
 
-	@Override
-	public void registerCommands() {
-		addCommands(new InfoCommand());
-		addCommands(new JaListCommand());
-		addCommands(new NameCommand());
-		addCommands(new ClearCommand());
-		addCommands(new HelpCommand());
-		addCommands(new GUICommand());
-		addCommands(new GroupCommand());
-		addCommands(new LookupCommand());
-		addCommands(new JaMuteCommand());
-		addCommands(new ConfigCommand());
-		addCommands(new JaToggleLeversCommand());
+    @Override
+    public void registerCommands() {
+        addCommands(new InfoCommand());
+        addCommands(new JaListCommand());
+        addCommands(new NameCommand());
+        addCommands(new ClearCommand());
+        addCommands(new HelpCommand());
+        addCommands(new GUICommand());
+        addCommands(new GroupCommand());
+        addCommands(new LookupCommand());
+        addCommands(new JaMuteCommand());
+        addCommands(new ConfigCommand());
+        addCommands(new JaToggleLeversCommand());
 
-	}
+    }
 }

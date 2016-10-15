@@ -76,8 +76,8 @@ public class LookupCommand extends PlayerCommand {
         }
     }
 
-	@Override
-	public List<String> tabComplete(CommandSender sender, String[] args) {
-		return null;
-	}
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return null;
+    }
 }

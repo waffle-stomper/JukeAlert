@@ -13,13 +13,13 @@ import com.untamedears.JukeAlert.JukeAlert;
 import com.untamedears.JukeAlert.tasks.GetSnitchListPlayerTask;
 
 public class JaListCommand extends PlayerCommand {
-	public JaListCommand() {
-		super("jalist");
-		setDescription("Displays Juke List Information");
-		setUsage("/jalist <page number>");
-		setArguments(0,1);
-		setIdentifier("jalist");
-	}
+    public JaListCommand() {
+        super("jalist");
+        setDescription("Displays Juke List Information");
+        setUsage("/jalist <page number>");
+        setArguments(0,1);
+        setIdentifier("jalist");
+    }
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
@@ -50,8 +50,8 @@ public class JaListCommand extends PlayerCommand {
 
     }
 
-	@Override
-	public List<String> tabComplete(CommandSender sender, String[] args) {
-		return null;
-	}
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return null;
+    }
 }

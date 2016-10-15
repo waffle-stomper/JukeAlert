@@ -169,11 +169,11 @@ public class Snitch implements QTBox, Comparable {
     }
     
     public boolean shouldToggleLevers() {
-    	return shouldToggleLevers;
+        return shouldToggleLevers;
     }
     
     public void setShouldToggleLevers(boolean shouldToggleLevers) {
-    	this.shouldToggleLevers = shouldToggleLevers;
+        this.shouldToggleLevers = shouldToggleLevers;
     }
 
     //Checks if the location is within the cuboid.

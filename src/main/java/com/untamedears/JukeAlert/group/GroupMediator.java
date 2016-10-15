@@ -22,23 +22,23 @@ public class GroupMediator {
     }
 
     public List<String> getGroupsWithPermission(UUID accountId, PermissionType perm) {
-    	List<String> returnValue = new ArrayList<String>();
-		List<Group> groups = new ArrayList<Group>();
-		for (String group: groupManager.getAllGroupNames(accountId)){
-			Group g = GroupManager.getGroup(group);
-			if (g == null) {
-				continue;
-			}
-			if (groupManager.hasAccess(group, accountId, perm)) {
-				groups.add(g);
-			}
-		}
-		for(Group f : groups) {
-			if (!returnValue.contains(f.getName())) {
-				returnValue.add(f.getName());
-			}
-		}
-    	
-    	return returnValue;
+        List<String> returnValue = new ArrayList<String>();
+        List<Group> groups = new ArrayList<Group>();
+        for (String group: groupManager.getAllGroupNames(accountId)){
+            Group g = GroupManager.getGroup(group);
+            if (g == null) {
+                continue;
+            }
+            if (groupManager.hasAccess(group, accountId, perm)) {
+                groups.add(g);
+            }
+        }
+        for(Group f : groups) {
+            if (!returnValue.contains(f.getName())) {
+                returnValue.add(f.getName());
+            }
+        }
+        
+        return returnValue;
     }
 }

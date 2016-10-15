@@ -196,9 +196,9 @@ public class JukeAlertLogger {
         // column1 = uuid varchar(40) (no null)
         // column2 = mutedgroups varchar(255) can be null (no groups to ignore)
         db.execute("CREATE TABLE IF NOT EXISTS `" + mutedGroupsTbl +"`("
-        		+ "uuid varchar(40) NOT NULL,"
-        		+ "muted_groups varchar(255),"
-        		+ "PRIMARY KEY key_uuid(uuid))");
+                + "uuid varchar(40) NOT NULL,"
+                + "muted_groups varchar(255),"
+                + "PRIMARY KEY key_uuid(uuid))");
 
         db.silentExecute(String.format(
             "ALTER TABLE %s ADD INDEX idx_log_time (snitch_log_time ASC);", snitchDetailsTbl));
@@ -225,7 +225,7 @@ public class JukeAlertLogger {
             db.executeLoud(MessageFormat.format(
                 "UPDATE {0} SET log_hour = TIMESTAMPDIFF(HOUR, ''2013-01-01 00:00:00'', snitch_log_time);",
                 snitchDetailsTbl));
-        	
+            
             db.executeLoud(MessageFormat.format(
                 " CREATE DEFINER=CURRENT_USER PROCEDURE CullSnitches( "
                 + " IN minDays INT, IN maxDays INT, IN maxEntries INT) SQL SECURITY INVOKER BEGIN\n"
@@ -265,46 +265,46 @@ public class JukeAlertLogger {
 
         try {
             db.executeLoud(MessageFormat.format(
-            		" CREATE DEFINER=CURRENT_USER PROCEDURE CullSnitchesBasedOnLastVisitDate(                                                                                                "
-            				+ " 	IN DaysFromLastAdminVisitForLoggedSnitchCulling INT, IN DaysFromLastAdminVisitForNonLoggedSnitchCulling INT) SQL SECURITY INVOKER BEGIN                          \n"
-            				+ "                                                                                                                                                                      \n"
-            				+ " 	DECLARE done BOOLEAN DEFAULT FALSE;                                                                                                                              \n"
-            				+ " 	DECLARE SnitchId INT;                                                                                                                                            \n"
-            				+ " 	                                                                                                                                                                 \n"
-            				+ " 	DECLARE snCursor CURSOR FOR                                                                                                                                      \n"
-            				+ " 	SELECT snitch_id                                                                                                                                                 \n"
-            				+ " 	FROM                                                                                                                                                             \n"
-            				+ " 		{0} s                                                                                                                                                    \n"
-            				+ " 	WHERE                                                                                                                                                            \n"
-            				+ " 		(                                                                                                                                                            \n"
-            				+ " 			(snitch_should_log = 1 AND DaysFromLastAdminVisitForLoggedSnitchCulling >= 1)                                                                            \n"
-            				+ " 			AND                                                                                                                                                      \n"
-            				+ " 			(TIMESTAMPDIFF(SECOND, DATE_ADD(UTC_TIMESTAMP(), INTERVAL -DaysFromLastAdminVisitForLoggedSnitchCulling DAY) ,s.last_semi_owner_visit_date) <= 0)        \n"
-            				+ " 		)                                                                                                                                                            \n"
-            				+ " 		OR                                                                                                                                                           \n"
-            				+ " 		(                                                                                                                                                            \n"
-            				+ " 			(snitch_should_log = 0 AND DaysFromLastAdminVisitForNonLoggedSnitchCulling >= 1)                                                                         \n"
-            				+ " 			AND                                                                                                                                                      \n"
-            				+ " 			(TIMESTAMPDIFF(SECOND, DATE_ADD(UTC_TIMESTAMP(), INTERVAL -DaysFromLastAdminVisitForNonLoggedSnitchCulling DAY) ,s.last_semi_owner_visit_date) <= 0)     \n"
-            				+ " 		);                                                                                                                                                           \n"
-            				+ " 		                                                                                                                                                             \n"
-            				+ " 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;                                                                                                          \n"
-            				+ " 	                                                                                                                                                                 \n"
-            				+ " 	OPEN snCursor;                                                                                                                                                   \n"
-            				+ " 	da_loop: LOOP                                                                                                                                                    \n"
-            				+ " 		                                                                                                                                                             \n"
-            				+ " 		FETCH snCursor INTO SnitchId;                                                                                                                                \n"
-            				+ " 		IF done THEN CLOSE snCursor; LEAVE da_loop;  END IF;                                                                                                         \n"
-            				+ " 		                                                                                                                                                             \n"
-            				+ " 		DELETE FROM {1} WHERE snitch_id = SnitchId;                                                                                                       \n"
-            				+ " 		DELETE FROM {0} WHERE snitch_id = SnitchId;                                                                                                              \n"
-            				+ " 		                                                                                                                                                             \n"
-            				+ " 		                                                                                                                                                             \n"
-            				+ " 	END LOOP da_loop;                                                                                                                                                \n"
-            				+ " 		                                                                                                                                                             \n"
-            				+ "                                                                                                                                                                      \n"
-            				+ " END                                                                                                                                                                  "
-            				, snitchsTbl, snitchDetailsTbl));
+                    " CREATE DEFINER=CURRENT_USER PROCEDURE CullSnitchesBasedOnLastVisitDate(                                                                                                "
+                            + "     IN DaysFromLastAdminVisitForLoggedSnitchCulling INT, IN DaysFromLastAdminVisitForNonLoggedSnitchCulling INT) SQL SECURITY INVOKER BEGIN                          \n"
+                            + "                                                                                                                                                                      \n"
+                            + "     DECLARE done BOOLEAN DEFAULT FALSE;                                                                                                                              \n"
+                            + "     DECLARE SnitchId INT;                                                                                                                                            \n"
+                            + "                                                                                                                                                                      \n"
+                            + "     DECLARE snCursor CURSOR FOR                                                                                                                                      \n"
+                            + "     SELECT snitch_id                                                                                                                                                 \n"
+                            + "     FROM                                                                                                                                                             \n"
+                            + "         {0} s                                                                                                                                                        \n"
+                            + "     WHERE                                                                                                                                                            \n"
+                            + "         (                                                                                                                                                            \n"
+                            + "             (snitch_should_log = 1 AND DaysFromLastAdminVisitForLoggedSnitchCulling >= 1)                                                                            \n"
+                            + "             AND                                                                                                                                                      \n"
+                            + "             (TIMESTAMPDIFF(SECOND, DATE_ADD(UTC_TIMESTAMP(), INTERVAL -DaysFromLastAdminVisitForLoggedSnitchCulling DAY) ,s.last_semi_owner_visit_date) <= 0)        \n"
+                            + "         )                                                                                                                                                            \n"
+                            + "             OR                                                                                                                                                       \n"
+                            + "             (                                                                                                                                                        \n"
+                            + "             (snitch_should_log = 0 AND DaysFromLastAdminVisitForNonLoggedSnitchCulling >= 1)                                                                         \n"
+                            + "             AND                                                                                                                                                      \n"
+                            + "             (TIMESTAMPDIFF(SECOND, DATE_ADD(UTC_TIMESTAMP(), INTERVAL -DaysFromLastAdminVisitForNonLoggedSnitchCulling DAY) ,s.last_semi_owner_visit_date) <= 0)     \n"
+                            + "         );                                                                                                                                                           \n"
+                            + "                                                                                                                                                                      \n"
+                            + "     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;                                                                                                          \n"
+                            + "                                                                                                                                                                      \n"
+                            + "     OPEN snCursor;                                                                                                                                                   \n"
+                            + "     da_loop: LOOP                                                                                                                                                    \n"
+                            + "                                                                                                                                                                      \n"
+                            + "         FETCH snCursor INTO SnitchId;                                                                                                                                \n"
+                            + "         IF done THEN CLOSE snCursor; LEAVE da_loop;  END IF;                                                                                                         \n"
+                            + "                                                                                                                                                                      \n"
+                            + "         DELETE FROM {1} WHERE snitch_id = SnitchId;                                                                                                                  \n"
+                            + "         DELETE FROM {0} WHERE snitch_id = SnitchId;                                                                                                                  \n"
+                            + "                                                                                                                                                                      \n"
+                            + "                                                                                                                                                                      \n"
+                            + "     END LOOP da_loop;                                                                                                                                                \n"
+                            + "                                                                                                                                                                      \n"
+                            + "                                                                                                                                                                      \n"
+                            + " END                                                                                                                                                                  "
+                            , snitchsTbl, snitchDetailsTbl));
 
         } catch (Exception ex) {
             String exMsg = ex.toString();
@@ -317,77 +317,77 @@ public class JukeAlertLogger {
         // Let's get some DB versioning in the next plugin, ok guys?
 
         try {
-        	db.silentExecute("DROP PROCEDURE GetJukeboxListForDelimitedGroup;");
+            db.silentExecute("DROP PROCEDURE GetJukeboxListForDelimitedGroup;");
             db.executeLoud(MessageFormat.format(
-            		" CREATE DEFINER=CURRENT_USER PROCEDURE GetJukeboxListForDelimitedGroup(                                         \n"
-            				+ " 	IN ValueString LONGTEXT                                                                                    \n"
-            				+ " 	, IN DELIM VARCHAR(255)                                                                                    \n"
-            				+ " 	, IN daysFromLastAdminVisitForLoggedSnitchCulling INT                                                      \n"
-            				+ " 	, IN daysFromLastAdminVisitForNonLoggedSnitchCulling INT                                                   \n"
-            				+ " 	, IN skipRecordCount INT                                                                                   \n"
-            				+ " 	, IN itemsOnPage INT                                                                                       \n"
-            				+ " ) SQL SECURITY INVOKER BEGIN                                                                                   \n"
-            				+ "                                                                                                                \n"
-            				+ " 	DROP TEMPORARY TABLE IF EXISTS GroupNames;                                                                 \n"
-            				+ " 	CREATE TEMPORARY TABLE GroupNames(                                                                         \n"
-            				+ " 		GroupName VARCHAR(255) NOT NULL KEY                                                                    \n"
-            				+ " 	);                                                                                                         \n"
-            				+ "                                                                                                                \n"
-            				+ " 	WHILE (LOCATE(DELIM, ValueString) > 0)                                                                     \n"
-            				+ " 	DO                                                                                                         \n"
-            				+ " 		SET @Loc = LOCATE(DELIM, ValueString);                                                                 \n"
-            				+ " 		SET @NewValue = SUBSTRING(ValueString, 1, @Loc-1);                                                     \n"
-            				+ " 		                                                                                                       \n"
-            				+ " 		IF (NOT EXISTS(SELECT 1 FROM GroupNames WHERE GroupName = @NewValue)) THEN                             \n"
-            				+ " 			INSERT INTO GroupNames SELECT @NewValue;                                                           \n"
-            				+ " 		END IF;                                                                                                \n"
-            				+ " 		                                                                                                       \n"
-            				+ " 		SET ValueString = SUBSTRING(ValueString, @Loc + LENGTH(DELIM));                                        \n"
-            				+ " 		                                                                                                       \n"
-            				+ " 	END WHILE;                                                                                                 \n"
-            				+ " 	                                                                                                           \n"
-            				+ " 	IF (LENGTH(ValueString) > 0 AND NOT EXISTS(SELECT 1 FROM GroupNames WHERE GroupName = ValueString)) THEN   \n"
-            				+ " 		INSERT INTO GroupNames SELECT ValueString;                                                             \n"
-            				+ " 	END IF;                                                                                                    \n"
-            				+ "                                                                                                                \n"
-            				+ "                                                                                                                \n"
-            				+ " 	SELECT 	                                                                                                   \n"
-            				+ " 		s.snitch_world AS world                                                                                \n"
-            				+ " 		, s.snitch_x AS X                                                                                      \n"
-            				+ " 		, s.snitch_y AS Y                                                                                      \n"
-            				+ " 		, s.snitch_z AS z                                                                                      \n"
-            				+ " 		, TIMESTAMPDIFF(SECOND                                                                                 \n"
-            				+ " 			, DATE_ADD(                                                                                        \n"
-            				+ " 				UTC_TIMESTAMP()                                                                                \n"
-            				+ " 				, INTERVAL                                                                                     \n"
-            				+ " 					CASE WHEN s.snitch_should_log = 1 THEN -daysFromLastAdminVisitForLoggedSnitchCulling       \n"
-            				+ " 					ELSE -daysFromLastAdminVisitForNonLoggedSnitchCulling                                      \n"
-            				+ " 				END DAY                                                                                        \n"
-            				+ " 			)                                                                                                  \n"
-            				+ " 			,s.last_semi_owner_visit_date                                                                      \n"
-            				+ " 		) AS TimeLeftAliveInSeconds                                                                            \n"
-            				+ " 		, s.snitch_should_log AS DoesSnitchRegisterEvents                                                      \n"
-            				+ " 		, s.snitch_group AS SnitchGroup					                                                              \n"
-            				+ " 		, s.snitch_name as SnitchName                                                                          \n"
-            				+ " 	 FROM                                                                                                      \n"
-            				+ " 		{0} s                                                                                                  \n"
-            				+ " 		INNER JOIN GroupNames filter                                                                           \n"
-            				+ " 			ON filter.groupname = s.snitch_group                                                               \n"
-            				+ " 	 WHERE s.soft_delete = 0                                                                                   \n"
-            				+ " 	 ORDER BY CASE                                                                                             \n"
-            				+ " 		WHEN                                                                                                   \n"
-            				+ " 			(s.snitch_should_log = 1 AND daysFromLastAdminVisitForLoggedSnitchCulling >= 1)                    \n"
-            				+ " 			OR (s.snitch_should_log = 0 AND daysFromLastAdminVisitForNonLoggedSnitchCulling >= 1)              \n"
-            				+ " 			THEN 1                                                                                             \n"
-            				+ " 		ELSE 0                                                                                                 \n"
-            				+ " 		END DESC                                                                                               \n"
-            				+ " 		, 5 ASC, s.snitch_id asc LIMIT skipRecordCount, itemsOnPage ;                                          \n"
-            				+ "                                                                                                                \n"
-            				+ " 	DROP TEMPORARY TABLE IF EXISTS GroupNames;                                                                 \n"
-            				+ " 		                                                                                                       \n"
-            				+ "                                                                                                                \n"
-            				+ " END                                                                                                            \n"
-            				, snitchsTbl));
+                    " CREATE DEFINER=CURRENT_USER PROCEDURE GetJukeboxListForDelimitedGroup(                                         \n"
+                            + "     IN ValueString LONGTEXT                                                                                    \n"
+                            + "     , IN DELIM VARCHAR(255)                                                                                    \n"
+                            + "     , IN daysFromLastAdminVisitForLoggedSnitchCulling INT                                                      \n"
+                            + "     , IN daysFromLastAdminVisitForNonLoggedSnitchCulling INT                                                   \n"
+                            + "     , IN skipRecordCount INT                                                                                   \n"
+                            + "     , IN itemsOnPage INT                                                                                       \n"
+                            + " ) SQL SECURITY INVOKER BEGIN                                                                                   \n"
+                            + "                                                                                                                \n"
+                            + "     DROP TEMPORARY TABLE IF EXISTS GroupNames;                                                                 \n"
+                            + "     CREATE TEMPORARY TABLE GroupNames(                                                                         \n"
+                            + "         GroupName VARCHAR(255) NOT NULL KEY                                                                    \n"
+                            + "     );                                                                                                         \n"
+                            + "                                                                                                                \n"
+                            + "     WHILE (LOCATE(DELIM, ValueString) > 0)                                                                     \n"
+                            + "     DO                                                                                                         \n"
+                            + "         SET @Loc = LOCATE(DELIM, ValueString);                                                                 \n"
+                            + "         SET @NewValue = SUBSTRING(ValueString, 1, @Loc-1);                                                     \n"
+                            + "                                                                                                                \n"
+                            + "         IF (NOT EXISTS(SELECT 1 FROM GroupNames WHERE GroupName = @NewValue)) THEN                             \n"
+                            + "             INSERT INTO GroupNames SELECT @NewValue;                                                           \n"
+                            + "         END IF;                                                                                                \n"
+                            + "                                                                                                                \n"
+                            + "         SET ValueString = SUBSTRING(ValueString, @Loc + LENGTH(DELIM));                                        \n"
+                            + "                                                                                                                \n"
+                            + "     END WHILE;                                                                                                 \n"
+                            + "                                                                                                                \n"
+                            + "     IF (LENGTH(ValueString) > 0 AND NOT EXISTS(SELECT 1 FROM GroupNames WHERE GroupName = ValueString)) THEN   \n"
+                            + "         INSERT INTO GroupNames SELECT ValueString;                                                             \n"
+                            + "     END IF;                                                                                                    \n"
+                            + "                                                                                                                \n"
+                            + "                                                                                                                \n"
+                            + "     SELECT                                                                                                     \n"
+                            + "         s.snitch_world AS world                                                                                \n"
+                            + "         , s.snitch_x AS X                                                                                      \n"
+                            + "         , s.snitch_y AS Y                                                                                      \n"
+                            + "         , s.snitch_z AS z                                                                                      \n"
+                            + "         , TIMESTAMPDIFF(SECOND                                                                                 \n"
+                            + "             , DATE_ADD(                                                                                        \n"
+                            + "                 UTC_TIMESTAMP()                                                                                \n"
+                            + "                 , INTERVAL                                                                                     \n"
+                            + "                     CASE WHEN s.snitch_should_log = 1 THEN -daysFromLastAdminVisitForLoggedSnitchCulling       \n"
+                            + "             ELSE -daysFromLastAdminVisitForNonLoggedSnitchCulling                                              \n"
+                            + "             END DAY                                                                                            \n"
+                            + "             )                                                                                                  \n"
+                            + "             ,s.last_semi_owner_visit_date                                                                      \n"
+                            + "         ) AS TimeLeftAliveInSeconds                                                                            \n"
+                            + "         , s.snitch_should_log AS DoesSnitchRegisterEvents                                                      \n"
+                            + "         , s.snitch_group AS SnitchGroup                                                                        \n"
+                            + "         , s.snitch_name as SnitchName                                                                          \n"
+                            + "      FROM                                                                                                      \n"
+                            + "         {0} s                                                                                                  \n"
+                            + "         INNER JOIN GroupNames filter                                                                           \n"
+                            + "             ON filter.groupname = s.snitch_group                                                               \n"
+                            + "      WHERE s.soft_delete = 0                                                                                   \n"
+                            + "      ORDER BY CASE                                                                                             \n"
+                            + "         WHEN                                                                                                   \n"
+                            + "             (s.snitch_should_log = 1 AND daysFromLastAdminVisitForLoggedSnitchCulling >= 1)                    \n"
+                            + "             OR (s.snitch_should_log = 0 AND daysFromLastAdminVisitForNonLoggedSnitchCulling >= 1)              \n"
+                            + "             THEN 1                                                                                             \n"
+                            + "         ELSE 0                                                                                                 \n"
+                            + "         END DESC                                                                                               \n"
+                            + "         , 5 ASC, s.snitch_id asc LIMIT skipRecordCount, itemsOnPage ;                                          \n"
+                            + "                                                                                                                \n"
+                            + "     DROP TEMPORARY TABLE IF EXISTS GroupNames;                                                                 \n"
+                            + "                                                                                                                \n"
+                            + "                                                                                                                \n"
+                            + " END                                                                                                            \n"
+                            , snitchsTbl));
 
         } catch (Exception ex) {
             String exMsg = ex.toString();
@@ -434,10 +434,10 @@ public class JukeAlertLogger {
             snitchsTbl, snitchDetailsTbl, logsPerPage));
         
         getSnitchListStmt = db.prepareStatement(MessageFormat.format(
-        		"Call GetJukeboxListForDelimitedGroup(?, ?, {0}, {1}, ?, {2});"
-        		, daysFromLastAdminVisitForLoggedSnitchCulling
-        		, daysFromLastAdminVisitForNonLoggedSnitchCulling
-        		, logsPerPage));
+                "Call GetJukeboxListForDelimitedGroup(?, ?, {0}, {1}, ?, {2});"
+                , daysFromLastAdminVisitForLoggedSnitchCulling
+                , daysFromLastAdminVisitForNonLoggedSnitchCulling
+                , logsPerPage));
 
         // statement to get the ID of a snitch in the main snitchsTbl based on a Location (x,y,z, world)
         getSnitchIdFromLocationStmt = db.prepareStatement(String.format("SELECT snitch_id FROM %s"
@@ -456,8 +456,8 @@ public class JukeAlertLogger {
 
         //
         softDeleteSnitchLogStmt = db.prepareStatement(String.format(
-        		"UPDATE %s SET soft_delete = 1 WHERE snitch_id=?",
-        		snitchDetailsTbl));
+                "UPDATE %s SET soft_delete = 1 WHERE snitch_id=?",
+                snitchDetailsTbl));
         
         //
         deleteSnitchStmt = db.prepareStatement(String.format(
@@ -466,8 +466,8 @@ public class JukeAlertLogger {
 
         //
         softDeleteSnitchStmt = db.prepareStatement(String.format(
-        		"UPDATE %s SET soft_delete = 1 WHERE snitch_world=? AND snitch_x=? AND snitch_y=? AND snitch_z=?",
-        		snitchsTbl));
+                "UPDATE %s SET soft_delete = 1 WHERE snitch_world=? AND snitch_x=? AND snitch_y=? AND snitch_z=?",
+                snitchsTbl));
         
         //
         updateGroupStmt = db.prepareStatement(String.format(
@@ -508,8 +508,8 @@ public class JukeAlertLogger {
             minEntryLifetimeDays, maxEntryLifetimeDays, maxEntryCount));
         
         cullSnitchEntriesAndSnitchesBasedOnVisitDateStmt = db.prepareStatement(MessageFormat.format(
-        		"Call CullSnitchesBasedOnLastVisitDate({0},{1});"
-        		, daysFromLastAdminVisitForLoggedSnitchCulling,daysFromLastAdminVisitForNonLoggedSnitchCulling));
+                "Call CullSnitchesBasedOnLastVisitDate({0},{1});"
+                , daysFromLastAdminVisitForLoggedSnitchCulling,daysFromLastAdminVisitForNonLoggedSnitchCulling));
         
         muteGroupsStmt = db.prepareStatement(String.format("INSERT INTO %s values(?,?);", mutedGroupsTbl));
         
@@ -682,10 +682,10 @@ public class JukeAlertLogger {
             ResultSet set = getSnitchLogStmt.executeQuery();
             if (set.isBeforeFirst()) {
                 while (set.next()) {
-                	SnitchAction entry = resultToSnitchAction(set, false);
-                	if (entry != null){
-                		info.add(entry);
-                	}
+                    SnitchAction entry = resultToSnitchAction(set, false);
+                    if (entry != null){
+                        info.add(entry);
+                    }
                 }
             }
         } catch (SQLException ex) {
@@ -802,10 +802,10 @@ public class JukeAlertLogger {
             ResultSet set = getSnitchLogGroupStmt.executeQuery();
             if (set.isBeforeFirst()) {
                 while (set.next()) {
-                	SnitchAction entry = resultToSnitchAction(set, true);
-                	if (entry != null){
-                		info.add(entry);
-                	}
+                    SnitchAction entry = resultToSnitchAction(set, true);
+                    if (entry != null){
+                        info.add(entry);
+                    }
                 }
             }
         } catch (SQLException ex) {
@@ -851,13 +851,13 @@ public class JukeAlertLogger {
 
     public Boolean deleteSnitchInfo(int snitchId) {
         try {
-        	if (this.softDelete) {
-        		softDeleteSnitchLogStmt.setInt(1, snitchId);
-        		softDeleteSnitchLogStmt.execute();
-        	} else {
-        		deleteSnitchLogStmt.setInt(1, snitchId);
-        		deleteSnitchLogStmt.execute();
-        	}
+            if (this.softDelete) {
+                softDeleteSnitchLogStmt.setInt(1, snitchId);
+                softDeleteSnitchLogStmt.execute();
+            } else {
+                deleteSnitchLogStmt.setInt(1, snitchId);
+                deleteSnitchLogStmt.execute();
+            }
             return true;
         } catch (SQLException ex) {
             this.plugin.getLogger().log(Level.SEVERE, "Could not delete Snitch Details from the snitchesDetail table using the snitch id " + snitchId, ex);
@@ -868,7 +868,7 @@ public class JukeAlertLogger {
     public JukeInfoBatch jukeinfobatch = new JukeInfoBatch(this);
     
     public void logSnitchVisit(Snitch snitch) {
-    	jukeinfobatch.addLastVisitData(snitch);
+        jukeinfobatch.addLastVisitData(snitch);
     }
 
     /**
@@ -960,7 +960,7 @@ public class JukeAlertLogger {
     }
     
     public void logSnitchExchangeEvent(Snitch snitch, Player player, Location loc){
-    	this.logSnitchInfo(snitch, null, loc, new Date(), LoggedAction.EXCHANGE, player.getPlayerListName(), null);
+        this.logSnitchInfo(snitch, null, loc, new Date(), LoggedAction.EXCHANGE, player.getPlayerListName(), null);
     }
 
     /**
@@ -1000,29 +1000,29 @@ public class JukeAlertLogger {
         this.logSnitchInfo(snitch, null, loc, new Date(), LoggedAction.ENTRY, player.getPlayerListName(), null);
     }
 
-	/**
-	 * Logs a message that someone logged in in the snitch's field
-	 *
-	 * @param snitch - the snitch that recorded this event
-	 * @param player - the player that logged in in the snitch's field
-	 * @param loc - the location of where the player logged in at
-	 */
-	public void logSnitchLogin(Snitch snitch, Location loc, Player player) {
-		// no material or victimUser for this event
-		this.logSnitchInfo(snitch, null, loc, new Date(), LoggedAction.LOGIN, player.getPlayerListName(), null);
-	}
+    /**
+     * Logs a message that someone logged in in the snitch's field
+     *
+     * @param snitch - the snitch that recorded this event
+     * @param player - the player that logged in in the snitch's field
+     * @param loc - the location of where the player logged in at
+     */
+    public void logSnitchLogin(Snitch snitch, Location loc, Player player) {
+        // no material or victimUser for this event
+        this.logSnitchInfo(snitch, null, loc, new Date(), LoggedAction.LOGIN, player.getPlayerListName(), null);
+    }
 
-	/**
-	 * Logs a message that someone logged out in the snitch's field
-	 *
-	 * @param snitch - the snitch that recorded this event
-	 * @param player - the player that logged out in the snitch's field
-	 * @param loc - the location of where the player logged out at
-	 */
-	public void logSnitchLogout(Snitch snitch, Location loc, Player player) {
-		// no material or victimUser for this event
-		this.logSnitchInfo(snitch, null, loc, new Date(), LoggedAction.LOGOUT, player.getPlayerListName(), null);
-	}
+    /**
+     * Logs a message that someone logged out in the snitch's field
+     *
+     * @param snitch - the snitch that recorded this event
+     * @param player - the player that logged out in the snitch's field
+     * @param loc - the location of where the player logged out at
+     */
+    public void logSnitchLogout(Snitch snitch, Location loc, Player player) {
+        // no material or victimUser for this event
+        this.logSnitchInfo(snitch, null, loc, new Date(), LoggedAction.LOGOUT, player.getPlayerListName(), null);
+    }
 
     /**
      * Logs a message that someone broke a block within the snitch's field
@@ -1071,15 +1071,15 @@ public class JukeAlertLogger {
      * @param vehicle - the vehicle destroyed
      */
     public void logSnitchCartDestroyed(Snitch snitch, Player player,Vehicle vehicle) {
-    	this.logSnitchInfo(snitch, null, vehicle.getLocation(), new Date(),LoggedAction.VEHICLE_DESTROY,player.getPlayerListName(),vehicle.getType().toString());
+        this.logSnitchInfo(snitch, null, vehicle.getLocation(), new Date(),LoggedAction.VEHICLE_DESTROY,player.getPlayerListName(),vehicle.getType().toString());
     }
     
     public void logSnitchMount(Snitch snitch, Player player, Entity mount) {
-    	this.logSnitchInfo(snitch, null, mount.getLocation(), new Date(), LoggedAction.ENTITY_MOUNT, player.getPlayerListName(), mount.getType().toString());
+        this.logSnitchInfo(snitch, null, mount.getLocation(), new Date(), LoggedAction.ENTITY_MOUNT, player.getPlayerListName(), mount.getType().toString());
     }
     
     public void logSnitchDismount(Snitch snitch, Player player, Entity mount) {
-    	this.logSnitchInfo(snitch, null, mount.getLocation(), new Date(), LoggedAction.ENTITY_DISMOUNT, player.getPlayerListName(), mount.getType().toString());
+        this.logSnitchInfo(snitch, null, mount.getLocation(), new Date(), LoggedAction.ENTITY_DISMOUNT, player.getPlayerListName(), mount.getType().toString());
     }
 
     /**
@@ -1113,19 +1113,19 @@ public class JukeAlertLogger {
             public void run() {
                 try {
                     jukeinfobatch.flush();
-                	synchronized(insertNewSnitchStmt) {
-	                    insertNewSnitchStmt.setString(1, world);
-	                    insertNewSnitchStmt.setString(2, name);
-	                    insertNewSnitchStmt.setInt(3, x);
-	                    insertNewSnitchStmt.setInt(4, y);
-	                    insertNewSnitchStmt.setInt(5, z);
-	                    insertNewSnitchStmt.setString(6, group);
-	                    insertNewSnitchStmt.setInt(7, lockedConfigManager.getDefaultCuboidSize());
-	                    insertNewSnitchStmt.setInt(8, lockedConfigManager.getDefaultCuboidSize());
-	                    insertNewSnitchStmt.setInt(9, lockedConfigManager.getDefaultCuboidSize());
-	                    insertNewSnitchStmt.setBoolean(10, shouldLog);
-	                    insertNewSnitchStmt.execute();
-                	}
+                    synchronized(insertNewSnitchStmt) {
+                        insertNewSnitchStmt.setString(1, world);
+                        insertNewSnitchStmt.setString(2, name);
+                        insertNewSnitchStmt.setInt(3, x);
+                        insertNewSnitchStmt.setInt(4, y);
+                        insertNewSnitchStmt.setInt(5, z);
+                        insertNewSnitchStmt.setString(6, group);
+                        insertNewSnitchStmt.setInt(7, lockedConfigManager.getDefaultCuboidSize());
+                        insertNewSnitchStmt.setInt(8, lockedConfigManager.getDefaultCuboidSize());
+                        insertNewSnitchStmt.setInt(9, lockedConfigManager.getDefaultCuboidSize());
+                        insertNewSnitchStmt.setBoolean(10, shouldLog);
+                        insertNewSnitchStmt.execute();
+                    }
                 } catch (SQLException ex) {
                     Logger.getLogger(JukeAlertLogger.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -1141,21 +1141,21 @@ public class JukeAlertLogger {
                 try {
                     jukeinfobatch.flush();
                     if (softDelete) {
-                    	synchronized (softDeleteSnitchStmt) {
-	                        softDeleteSnitchStmt.setString(1, world);
-	                        softDeleteSnitchStmt.setInt(2, (int) Math.floor(x));
-	                        softDeleteSnitchStmt.setInt(3, (int) Math.floor(y));
-	                        softDeleteSnitchStmt.setInt(4, (int) Math.floor(z));
-	                        softDeleteSnitchStmt.execute();                    		
-                    	}
+                        synchronized (softDeleteSnitchStmt) {
+                            softDeleteSnitchStmt.setString(1, world);
+                            softDeleteSnitchStmt.setInt(2, (int) Math.floor(x));
+                            softDeleteSnitchStmt.setInt(3, (int) Math.floor(y));
+                            softDeleteSnitchStmt.setInt(4, (int) Math.floor(z));
+                            softDeleteSnitchStmt.execute();
+                        }
                     } else {
-	                    synchronized (deleteSnitchStmt) {
-	                        deleteSnitchStmt.setString(1, world);
-	                        deleteSnitchStmt.setInt(2, (int) Math.floor(x));
-	                        deleteSnitchStmt.setInt(3, (int) Math.floor(y));
-	                        deleteSnitchStmt.setInt(4, (int) Math.floor(z));
-	                        deleteSnitchStmt.execute();
-	                    }
+                        synchronized (deleteSnitchStmt) {
+                            deleteSnitchStmt.setString(1, world);
+                            deleteSnitchStmt.setInt(2, (int) Math.floor(x));
+                            deleteSnitchStmt.setInt(3, (int) Math.floor(y));
+                            deleteSnitchStmt.setInt(4, (int) Math.floor(z));
+                            deleteSnitchStmt.execute();
+                        }
                     }
                 } catch (SQLException ex) {
                     Logger.getLogger(JukeAlertLogger.class.getName()).log(Level.SEVERE, null, ex);
@@ -1233,9 +1233,9 @@ public class JukeAlertLogger {
             public void run() {
                 try {
                     synchronized (updateSnitchToggleLeversStmt) {
-                    	updateSnitchToggleLeversStmt.setBoolean(1, isEnabled);
-                    	updateSnitchToggleLeversStmt.setInt(2, snitch.getId());
-                    	updateSnitchToggleLeversStmt.execute();
+                        updateSnitchToggleLeversStmt.setBoolean(1, isEnabled);
+                        updateSnitchToggleLeversStmt.setInt(2, snitch.getId());
+                        updateSnitchToggleLeversStmt.execute();
                     }
                 } catch (SQLException ex) {
                     Logger.getLogger(JukeAlertLogger.class.getName()).log(Level.SEVERE, null, ex);
@@ -1275,22 +1275,22 @@ public class JukeAlertLogger {
     }
     
     public List<SnitchAction> getAllSnitchLogs(Snitch snitch) {
-    	try {
+        try {
             synchronized (updateSnitchGroupStmt) {
                getAllSnitchLogs.setInt(1, snitch.getId());
                ResultSet rs = getAllSnitchLogs.executeQuery();
                List <SnitchAction> log = new LinkedList<SnitchAction>();
                while (rs.next()) {
-            	   int snitchActionId = rs.getInt("snitch_details_id");
-            	   Date date = new Date(rs.getTimestamp("snitch_log_time").getTime());
-            	   LoggedAction action = LoggedAction.getFromId(rs.getInt("snitch_logged_action"));
-            	   String initiatedUser = rs.getString("snitch_logged_initiated_user");
-            	   String victim = rs.getString("snitch_logged_victim_user");
-            	   int x = rs.getInt("snitch_logged_x");
-            	   int y = rs.getInt("snitch_logged_y");
-            	   int z = rs.getInt("snitch_logged_z");
-            	   Material mat = Material.getMaterial(rs.getInt("snitch_logged_materialid"));
-            	   log.add(new SnitchAction(snitchActionId, snitch.getId(), date, action, initiatedUser, victim, x, y, z, mat));
+                   int snitchActionId = rs.getInt("snitch_details_id");
+                   Date date = new Date(rs.getTimestamp("snitch_log_time").getTime());
+                   LoggedAction action = LoggedAction.getFromId(rs.getInt("snitch_logged_action"));
+                   String initiatedUser = rs.getString("snitch_logged_initiated_user");
+                   String victim = rs.getString("snitch_logged_victim_user");
+                   int x = rs.getInt("snitch_logged_x");
+                   int y = rs.getInt("snitch_logged_y");
+                   int z = rs.getInt("snitch_logged_z");
+                   Material mat = Material.getMaterial(rs.getInt("snitch_logged_materialid"));
+                   log.add(new SnitchAction(snitchActionId, snitch.getId(), date, action, initiatedUser, victim, x, y, z, mat));
                }
                return log;
             }
@@ -1453,20 +1453,20 @@ public class JukeAlertLogger {
             int snitchActionId = set.getInt("snitch_details_id");
             int snitchId = set.getInt("snitch_id");
             Date date = new Date(set.getTimestamp("snitch_log_time").getTime());
-     	    LoggedAction action = LoggedAction.getFromId(set.getInt("snitch_logged_action"));
-     	    String initiatedUser = set.getString("snitch_logged_initiated_user");
-     	    String victim = set.getString("snitch_logged_victim_user");
-     	    int x = set.getInt("snitch_logged_x");
-     	    int y = set.getInt("snitch_logged_y");
-     	    int z = set.getInt("snitch_logged_z");
-     	    Material mat = Material.getMaterial(set.getInt("snitch_logged_materialid"));
-     	    if (victim != null && !victim.isEmpty()){
-         	    Material victim_material = Material.matchMaterial(victim);
+            LoggedAction action = LoggedAction.getFromId(set.getInt("snitch_logged_action"));
+            String initiatedUser = set.getString("snitch_logged_initiated_user");
+            String victim = set.getString("snitch_logged_victim_user");
+            int x = set.getInt("snitch_logged_x");
+            int y = set.getInt("snitch_logged_y");
+            int z = set.getInt("snitch_logged_z");
+            Material mat = Material.getMaterial(set.getInt("snitch_logged_materialid"));
+            if (victim != null && !victim.isEmpty()){
+                Material victim_material = Material.matchMaterial(victim);
                 if (mat.equals(Material.AIR) && victim_material != null && action != LoggedAction.KILL){
                     mat = victim_material;
                 }
-     	    }
-     	    output = new SnitchAction(snitchActionId, snitchId, date, action, initiatedUser, victim, x, y, z, mat);
+            }
+            output = new SnitchAction(snitchActionId, snitchId, date, action, initiatedUser, victim, x, y, z, mat);
         } catch (SQLException ex) {
             this.plugin.getLogger().log(Level.SEVERE, "Could not get Snitch Details!");
         }
@@ -1506,101 +1506,101 @@ public class JukeAlertLogger {
     }
     
     public boolean muteGroups(UUID uuid, String group2Mute){
-		try {
-			muteGroupsStmt.setString(1, uuid.toString());
-			muteGroupsStmt.setString(2, group2Mute);
-			if(muteGroupsStmt.execute()) return true;
-		} catch (SQLException e) {
-			this.plugin.getLogger().log(Level.SEVERE, 
-					String.format("Could not add muted_group: %s", e.toString()));
-		}
-    	
-    	return false;
+        try {
+            muteGroupsStmt.setString(1, uuid.toString());
+            muteGroupsStmt.setString(2, group2Mute);
+            if(muteGroupsStmt.execute()) return true;
+        } catch (SQLException e) {
+            this.plugin.getLogger().log(Level.SEVERE, 
+                    String.format("Could not add muted_group: %s", e.toString()));
+        }
+        
+        return false;
     }
 
-	public String getMutedGroups(UUID uuid){
-		try{
-    		getMutedGroupsStmt.setString(1, uuid.toString());
-    		ResultSet set = getMutedGroupsStmt.executeQuery();
-    		if(!set.next()) return null;
-    		return set.getString(1);
-    	} catch (SQLException e){
-    		this.plugin.getLogger().log(Level.SEVERE, 
-					String.format("Could not retreive muted_group: %s", e.toString()));
-    	}
-		return null;
+    public String getMutedGroups(UUID uuid){
+        try{
+            getMutedGroupsStmt.setString(1, uuid.toString());
+            ResultSet set = getMutedGroupsStmt.executeQuery();
+            if(!set.next()) return null;
+            return set.getString(1);
+        } catch (SQLException e){
+            this.plugin.getLogger().log(Level.SEVERE, 
+                    String.format("Could not retreive muted_group: %s", e.toString()));
+        }
+        return null;
     }
-	
-	public boolean updateMutedGroups(UUID uuid, String group2Mute){
-		String curGroups = getMutedGroups(uuid);
-		String newGroups = curGroups + " " + group2Mute;
-		try{
-			updateMutedGroupsStmt.setString(1, newGroups);
-			updateMutedGroupsStmt.setString(2, uuid.toString());
-			if(updateMutedGroupsStmt.execute()){ 
-				return true;
-				}
-		}catch (SQLException e){
-    		this.plugin.getLogger().log(Level.SEVERE, 
-					String.format("Could not update muted_groups: %s", e.toString()));
-		}
-		return false;
-	}
+    
+    public boolean updateMutedGroups(UUID uuid, String group2Mute){
+        String curGroups = getMutedGroups(uuid);
+        String newGroups = curGroups + " " + group2Mute;
+        try{
+            updateMutedGroupsStmt.setString(1, newGroups);
+            updateMutedGroupsStmt.setString(2, uuid.toString());
+            if(updateMutedGroupsStmt.execute()){ 
+                return true;
+            }
+        }catch (SQLException e){
+            this.plugin.getLogger().log(Level.SEVERE, 
+                    String.format("Could not update muted_groups: %s", e.toString()));
+        }
+        return false;
+    }
    
-	public Set<String> getIgnoreUUIDs(String ignoredGroup) throws SQLException{
-		Set<String> ignoringUsers = new HashSet<String>();
-		String sql = "%" + ignoredGroup + "%";
-		getIgnoreUUIDSStmt.setString(1, sql);
-		ResultSet set = getIgnoreUUIDSStmt.executeQuery();
+    public Set<String> getIgnoreUUIDs(String ignoredGroup) throws SQLException{
+        Set<String> ignoringUsers = new HashSet<String>();
+        String sql = "%" + ignoredGroup + "%";
+        getIgnoreUUIDSStmt.setString(1, sql);
+        ResultSet set = getIgnoreUUIDSStmt.executeQuery();
 
-		if(!set.next()){
-			return null;
-		}
-		else{
-			//add the first value
-			ignoringUsers.add(set.getString(1));
-			//now if there is more loop through them
-			while(set.next()){
-				//create set of uuids
-				ignoringUsers.add(set.getString(1));
-			}
-		}
-		return ignoringUsers;
-	}
-	
-	public boolean removeIgnoredGroup(String removeGroup, UUID uuid){
-		String curGroups = getMutedGroups(uuid);
-		if(curGroups.equals(removeGroup)){
-			removeUUIDMuted(uuid);
-			return true;
-		}
-		String[] curGroupA = curGroups.split("\\s+");
-		List<String> groupList = new ArrayList<String>(Arrays.asList(curGroupA));
-		groupList.remove(removeGroup);
-		//back to string
-		String newGroups = StringUtils.join(groupList, " ");
-		try{
-			removeIgnoredGroupStmt.setString(1, newGroups);
-			removeIgnoredGroupStmt.setString(2, uuid.toString());
-			if(removeIgnoredGroupStmt.execute()){
-				return true;
-			}
-		}catch (SQLException e){
-			this.plugin.getLogger().log(Level.SEVERE, 
-					String.format("Could not remove Ignored Group: %s", e.toString()));
-		}
-		return false;
-	}
-	
-	 
-	 public void removeUUIDMuted(UUID uuid){
-		 try{
-			 removeUUIDMutedStmt.setString(1, uuid.toString());
-			 removeUUIDMutedStmt.execute();
-		 }catch (SQLException e){
-			 this.plugin.getLogger().log(Level.SEVERE, 
-						String.format("Could not remove UUID Row: %s", e.toString()));
-		 }
-		 return;
-	 }
+        if(!set.next()){
+            return null;
+        }
+        else{
+            //add the first value
+            ignoringUsers.add(set.getString(1));
+            //now if there is more loop through them
+            while(set.next()){
+                //create set of uuids
+                ignoringUsers.add(set.getString(1));
+            }
+        }
+        return ignoringUsers;
+    }
+    
+    public boolean removeIgnoredGroup(String removeGroup, UUID uuid){
+        String curGroups = getMutedGroups(uuid);
+        if(curGroups.equals(removeGroup)){
+            removeUUIDMuted(uuid);
+            return true;
+        }
+        String[] curGroupA = curGroups.split("\\s+");
+        List<String> groupList = new ArrayList<String>(Arrays.asList(curGroupA));
+        groupList.remove(removeGroup);
+        //back to string
+        String newGroups = StringUtils.join(groupList, " ");
+        try{
+            removeIgnoredGroupStmt.setString(1, newGroups);
+            removeIgnoredGroupStmt.setString(2, uuid.toString());
+            if(removeIgnoredGroupStmt.execute()){
+                return true;
+            }
+        }catch (SQLException e){
+            this.plugin.getLogger().log(Level.SEVERE, 
+                    String.format("Could not remove Ignored Group: %s", e.toString()));
+        }
+        return false;
+    }
+    
+    
+    public void removeUUIDMuted(UUID uuid){
+        try{
+            removeUUIDMutedStmt.setString(1, uuid.toString());
+            removeUUIDMutedStmt.execute();
+        }catch (SQLException e){
+            this.plugin.getLogger().log(Level.SEVERE, 
+                    String.format("Could not remove UUID Row: %s", e.toString()));
+        }
+        return;
+    }
 }

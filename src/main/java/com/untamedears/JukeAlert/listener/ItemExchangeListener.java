@@ -19,23 +19,23 @@ import com.untamedears.JukeAlert.model.Snitch;
 
 public class ItemExchangeListener implements Listener{
 
-	private final JukeAlert plugin = JukeAlert.getInstance();
-	SnitchManager snitchManager = plugin.getSnitchManager();
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void exchangeEvent(IETransactionEvent event){
-		Player player = event.getPlayer();
-		Location location = event.getExchangeLocation();
-		World world = location.getWorld();
-		UUID accountId = player.getUniqueId();
-		Set<Snitch> snitches = snitchManager.findSnitches(world, location);
-		for (Snitch snitch : snitches) {
+    private final JukeAlert plugin = JukeAlert.getInstance();
+    SnitchManager snitchManager = plugin.getSnitchManager();
+    
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void exchangeEvent(IETransactionEvent event){
+        Player player = event.getPlayer();
+        Location location = event.getExchangeLocation();
+        World world = location.getWorld();
+        UUID accountId = player.getUniqueId();
+        Set<Snitch> snitches = snitchManager.findSnitches(world, location);
+        for (Snitch snitch : snitches) {
             if (!immuneToSnitch(snitch, accountId)) {
                 snitch.imposeSnitchTax();
                 if (snitch.shouldLog()) {
-                	plugin.getJaLogger().logSnitchExchangeEvent(snitch, player, location);
+                    plugin.getJaLogger().logSnitchExchangeEvent(snitch, player, location);
                 }
             }
         }
-	}
+    }
 }

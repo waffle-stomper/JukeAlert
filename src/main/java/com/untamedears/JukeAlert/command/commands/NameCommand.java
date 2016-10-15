@@ -34,14 +34,14 @@ public class NameCommand extends PlayerCommand {
             if (args[0].length() > 40) {
                 name = args[0].substring(0, 39);
             } else {
-            	name = args[0];
+                name = args[0];
             }
             Snitch snitch = findLookingAtOrClosestSnitch(player, PermissionType.getPermission("RENAME_SNITCH"));
             if (snitch != null) {
-            	JukeAlert plugin = JukeAlert.getInstance();
-            	plugin.getJaLogger().updateSnitchName(snitch, name);
-            	snitch.setName(name);
-            	sender.sendMessage(ChatColor.AQUA + " Changed snitch name to " + name);
+                JukeAlert plugin = JukeAlert.getInstance();
+                plugin.getJaLogger().updateSnitchName(snitch, name);
+                snitch.setName(name);
+                sender.sendMessage(ChatColor.AQUA + " Changed snitch name to " + name);
             }
             return true;
         } else {
@@ -50,8 +50,8 @@ public class NameCommand extends PlayerCommand {
         }
     }
 
-	@Override
-	public List<String> tabComplete(CommandSender sender, String[] args) {
-		return null;
-	}
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return null;
+    }
 }

@@ -30,7 +30,7 @@ public class JukeAlert extends ACivMod {
 
     @Override
     public void onEnable() {
-    	super.onEnable();
+        super.onEnable();
         instance = this;
         configManager = new ConfigManager();
         groupMediator = new GroupMediator();
@@ -54,29 +54,29 @@ public class JukeAlert extends ACivMod {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new JukeAlertListener(), this);
         if (pm.isPluginEnabled("ItemExchange"))
-        	pm.registerEvents(new ItemExchangeListener(), this);
+            pm.registerEvents(new ItemExchangeListener(), this);
         if (pm.isPluginEnabled("Mercury"))
-			pm.registerEvents(new MercuryListener(), this);
+            pm.registerEvents(new MercuryListener(), this);
     }
     
     private void registerNameLayerPermissions() {
-    	LinkedList <PlayerType> memberAndAbove = new LinkedList<PlayerType>();
-    	LinkedList <PlayerType> modAndAbove = new LinkedList<PlayerType>();
-    	memberAndAbove.add(PlayerType.MEMBERS);
-    	memberAndAbove.add(PlayerType.MODS);
-    	memberAndAbove.add(PlayerType.ADMINS);
-    	memberAndAbove.add(PlayerType.OWNER);
-    	modAndAbove.add(PlayerType.MODS);
-    	modAndAbove.add(PlayerType.ADMINS);
-    	modAndAbove.add(PlayerType.OWNER);
-    	PermissionType.registerPermission("LIST_SNITCHES", (LinkedList<PlayerType>)modAndAbove.clone()); //also tied to refreshing snitches
-    	PermissionType.registerPermission("SNITCH_NOTIFICATIONS", (LinkedList<PlayerType>)memberAndAbove.clone());
-    	PermissionType.registerPermission("READ_SNITCHLOG", (LinkedList<PlayerType>)memberAndAbove.clone());
-    	PermissionType.registerPermission("RENAME_SNITCH", (LinkedList<PlayerType>)modAndAbove.clone());
-    	PermissionType.registerPermission("SNITCH_IMMUNE", (LinkedList<PlayerType>)memberAndAbove.clone());
-    	PermissionType.registerPermission("LOOKUP_SNITCH", (LinkedList<PlayerType>)modAndAbove.clone());
-    	PermissionType.registerPermission("CLEAR_SNITCHLOG", (LinkedList<PlayerType>)modAndAbove.clone());
-    	PermissionType.registerPermission("SNITCH_TOGGLE_LEVER", (LinkedList<PlayerType>)modAndAbove.clone());
+        LinkedList <PlayerType> memberAndAbove = new LinkedList<PlayerType>();
+        LinkedList <PlayerType> modAndAbove = new LinkedList<PlayerType>();
+        memberAndAbove.add(PlayerType.MEMBERS);
+        memberAndAbove.add(PlayerType.MODS);
+        memberAndAbove.add(PlayerType.ADMINS);
+        memberAndAbove.add(PlayerType.OWNER);
+        modAndAbove.add(PlayerType.MODS);
+        modAndAbove.add(PlayerType.ADMINS);
+        modAndAbove.add(PlayerType.OWNER);
+        PermissionType.registerPermission("LIST_SNITCHES", (LinkedList<PlayerType>)modAndAbove.clone()); //also tied to refreshing snitches
+        PermissionType.registerPermission("SNITCH_NOTIFICATIONS", (LinkedList<PlayerType>)memberAndAbove.clone());
+        PermissionType.registerPermission("READ_SNITCHLOG", (LinkedList<PlayerType>)memberAndAbove.clone());
+        PermissionType.registerPermission("RENAME_SNITCH", (LinkedList<PlayerType>)modAndAbove.clone());
+        PermissionType.registerPermission("SNITCH_IMMUNE", (LinkedList<PlayerType>)memberAndAbove.clone());
+        PermissionType.registerPermission("LOOKUP_SNITCH", (LinkedList<PlayerType>)modAndAbove.clone());
+        PermissionType.registerPermission("CLEAR_SNITCHLOG", (LinkedList<PlayerType>)modAndAbove.clone());
+        PermissionType.registerPermission("SNITCH_TOGGLE_LEVER", (LinkedList<PlayerType>)modAndAbove.clone());
     }
 
     public static JukeAlert getInstance() {
@@ -108,8 +108,8 @@ public class JukeAlert extends ACivMod {
         this.getLogger().log(Level.INFO, message);
     }
 
-	@Override
-	protected String getPluginName() {
-		return "JukeAlert";
-	}
+    @Override
+    protected String getPluginName() {
+        return "JukeAlert";
+    }
 }

@@ -59,8 +59,8 @@ public class SnitchManager {
                 worldSnitches.add(snitch);
                 Set <Snitch> groupSet = snitchesByGroup.get(snitch.getGroup().getName());
                 if (groupSet == null) {
-                	groupSet  = new HashSet<Snitch>();
-                	snitchesByGroup.put(snitch.getGroup().getName(), groupSet);
+                    groupSet  = new HashSet<Snitch>();
+                    snitchesByGroup.put(snitch.getGroup().getName(), groupSet);
                 }
                 groupSet.add(snitch);
             }
@@ -73,31 +73,31 @@ public class SnitchManager {
             logger.cullSnitchEntries();
         }
         if (plugin.getConfigManager().getToggleRestartCheckGroup()){
-        	for (Snitch snitch: snitchesById.values()){
-        		Location loc = snitch.getLoc();
-        		Reinforcement rein = Citadel.getReinforcementManager().getReinforcement(loc);
-        		if (rein == null || !(rein instanceof PlayerReinforcement))
-        			continue;
-        		PlayerReinforcement pRein = (PlayerReinforcement) rein;
-        		Group reinfGroup = pRein.getGroup();
-        		Group snitchGroup = snitch.getGroup();
-        		if (reinfGroup == null) {
-					plugin.getLogger().log(Level.SEVERE, "Juke at {0} is reinforced to a group that no longer exists: {1} (former id: {2}) - removing",
-							new Object[] {snitch.getLoc(), (snitchGroup != null ? snitchGroup.getName() : null), pRein.getGroupId() });
-					final String worldName = snitch.getLoc().getWorld().getName();
-					final int x = snitch.getX();
-					final int y = snitch.getY();
-					final int z = snitch.getZ();
-        			logger.logSnitchBreak(worldName, x, y, z);
-        			continue;
-        		}
-        		if (snitchGroup == null || !reinfGroup.getName().equals(snitchGroup.getName())){
-        			plugin.getLogger().log(Level.INFO, "Found mismatched juke at {0} correcting from {1} to {2}",
-        					new Object[] { snitch.getLoc(), (snitchGroup != null ? snitchGroup.getName() : null), 
-        							reinfGroup.getName()});
-        			snitch.setGroup(reinfGroup);
-        		}
-        	}
+            for (Snitch snitch: snitchesById.values()){
+                Location loc = snitch.getLoc();
+                Reinforcement rein = Citadel.getReinforcementManager().getReinforcement(loc);
+                if (rein == null || !(rein instanceof PlayerReinforcement))
+                    continue;
+                PlayerReinforcement pRein = (PlayerReinforcement) rein;
+                Group reinfGroup = pRein.getGroup();
+                Group snitchGroup = snitch.getGroup();
+                if (reinfGroup == null) {
+                    plugin.getLogger().log(Level.SEVERE, "Juke at {0} is reinforced to a group that no longer exists: {1} (former id: {2}) - removing",
+                            new Object[] {snitch.getLoc(), (snitchGroup != null ? snitchGroup.getName() : null), pRein.getGroupId() });
+                    final String worldName = snitch.getLoc().getWorld().getName();
+                    final int x = snitch.getX();
+                    final int y = snitch.getY();
+                    final int z = snitch.getZ();
+                    logger.logSnitchBreak(worldName, x, y, z);
+                    continue;
+                }
+                if (snitchGroup == null || !reinfGroup.getName().equals(snitchGroup.getName())){
+                    plugin.getLogger().log(Level.INFO, "Found mismatched juke at {0} correcting from {1} to {2}",
+                            new Object[] { snitch.getLoc(), (snitchGroup != null ? snitchGroup.getName() : null), 
+                                    reinfGroup.getName()});
+                    snitch.setGroup(reinfGroup);
+                }
+            }
         }
     }
 
@@ -119,8 +119,8 @@ public class SnitchManager {
         for (Snitch snitch : getAllSnitches()) {
             final Group group = snitch.getGroup();
             if (group == null) {
-            	plugin.getLogger().log(Level.WARNING, "Snitch at {0} lacks a valid group, skipping cull.", snitch.getLoc());
-            	continue;
+                plugin.getLogger().log(Level.WARNING, "Snitch at {0} lacks a valid group, skipping cull.", snitch.getLoc());
+                continue;
             }
             final String groupName = group.getName();
             Boolean performCull = cullGroups.get(groupName);
@@ -129,22 +129,22 @@ public class SnitchManager {
                 if (!uuids.containsKey(playerName)) {
                     OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
                     if (player != null) {
-                    	uuids.put(playerName, player.getLastPlayed());
+                        uuids.put(playerName, player.getLastPlayed());
                     } else {
-                    	uuids.put(playerName, null);
+                        uuids.put(playerName, null);
                     }
                 }
                 Long maxLastPlayed = uuids.get(playerName);
                 for (UUID mod : group.getAllMembers()) {
                     playerName = mod;
                     if (!NameAPI.getGroupManager().hasAccess(group, playerName, PermissionType.getPermission("LIST_SNITCHES"))) // If they have permission to break blocks.
-                    	continue;
+                        continue;
                     if (!uuids.containsKey(playerName)) {
                         OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
                         if (player != null) {
-                        	uuids.put(playerName, player.getLastPlayed());
+                            uuids.put(playerName, player.getLastPlayed());
                         } else {
-                        	uuids.put(playerName, null);
+                            uuids.put(playerName, null);
                         }
                     }
                     Long lastPlayed = uuids.get(playerName);
@@ -205,8 +205,8 @@ public class SnitchManager {
         }
         Set <Snitch> groupSet = snitchesByGroup.get(snitch.getGroup().getName());
         if (groupSet == null) {
-        	groupSet  = new HashSet<Snitch>();
-        	snitchesByGroup.put(snitch.getGroup().getName(), groupSet);
+            groupSet  = new HashSet<Snitch>();
+            snitchesByGroup.put(snitch.getGroup().getName(), groupSet);
         }
         groupSet.add(snitch);
         snitchesById.put(snitch.getId(), snitch);
@@ -217,7 +217,7 @@ public class SnitchManager {
         snitchesById.remove(snitch.getId());
         Set <Snitch> groupSet = snitchesByGroup.get(snitch.getGroup().getName());
         if (groupSet != null) {
-        	groupSet.remove(snitch);
+            groupSet.remove(snitch);
         }
     }
 
@@ -242,6 +242,6 @@ public class SnitchManager {
     }
     
     public Set <Snitch> getSnitchesForGroup(String groupName) {
-    	return snitchesByGroup.get(groupName);
+        return snitchesByGroup.get(groupName);
     }
 }

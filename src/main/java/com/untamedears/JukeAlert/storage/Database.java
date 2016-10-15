@@ -132,7 +132,7 @@ public class Database {
         try {
             connection.prepareStatement(sql).executeUpdate();
         } catch (SQLException ex) {
-			try {
+            try {
                 connect();
                 connection.prepareStatement(sql).executeUpdate();
             } catch (SQLException ex2) {

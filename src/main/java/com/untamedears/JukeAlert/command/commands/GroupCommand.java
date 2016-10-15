@@ -66,8 +66,8 @@ public class GroupCommand extends PlayerCommand {
         Bukkit.getScheduler().runTaskAsynchronously(JukeAlert.getInstance(), task);
     }
 
-	@Override
-	public List<String> tabComplete(CommandSender sender, String[] args) {
-		return null;
-	}
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return null;
+    }
 }
