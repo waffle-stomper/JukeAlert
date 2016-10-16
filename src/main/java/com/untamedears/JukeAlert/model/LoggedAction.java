@@ -17,7 +17,7 @@ public enum LoggedAction {
     KILL(0, "Killed", ChatColor.DARK_RED, 3),
     BLOCK_PLACE(1, "Block Place", ChatColor.DARK_RED, 2),
     BLOCK_BREAK(2, "Block Break", ChatColor.DARK_RED, 2),
-    BUCKET_FILL(3, "Buket Fill", ChatColor.GREEN, 2),
+    BUCKET_FILL(3, "Bucket Fill", ChatColor.GREEN, 2),
     BUCKET_EMPTY(4, "Bucket Empty", ChatColor.DARK_RED, 2),
     ENTRY(5, "Entry", ChatColor.BLUE, 1),
     USED(6, "Used", ChatColor.GREEN, 2),
